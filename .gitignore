@@ -1,0 +1,9 @@
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+/help.md
+.mtl.yaml
+/nm-config.json
+.idea/
+*.iml
+.DS_Store
+.env
