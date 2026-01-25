@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SMS - Situational Awareness Tool | Cmte. Matheus Guerra</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; }
+        .checklist-item-container { border-left-width: 4px; border-left-color: #cbd5e1; transition: all 0.2s ease; }
+        .checklist-item-container.checked { background-color: #f0fdf4; border-left-color: #22c55e; }
+        .checklist-item-container.negative { background-color: #fff1f2; border-left-color: #ef4444; }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+    <header class="no-print text-center mb-12 border-b pb-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-900">SMS - Situational Awareness Tool</h1>
+        <p class="mt-2 text-lg text-sky-600 font-medium">Ferramenta de apoio à Consciência Situacional</p>
+    </header>
+
+    <main>
+        <section id="checklist" class="mb-8">
+            <h2 class="text-2xl font-bold text-center mb-8 text-slate-900">1. Check-list Interativo Pré-Voo</h2>
+            <div id="accordion-container" class="space-y-6">
+            </div>
+        </section>
+
+        <div class="no-print text-center mt-8 mb-16 flex flex-wrap justify-center gap-4">
+            <button id="save-db-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105">
+                FINALIZAR E SALVAR NA API
+            </button>
+            <button id="reset-button" class="bg-slate-400 hover:bg-slate-500 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all">
+                REDEFINIR
+            </button>
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all">
+                IMPRIMIR PDF
+            </button>
+        </div>
+
+        <section id="summary" class="bg-white p-8 rounded-xl shadow-sm mb-16 border border-slate-200">
+            <h2 class="text-2xl font-bold text-center mb-6 text-slate-900">2. Prontidão Operacional (Radar SA)</h2>
+            <div class="chart-container">
+                <canvas id="saRadarChart"></canvas>
+            </div>
+        </section>
+
+        <section id="dashboard" class="mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-slate-400">
+                    <p class="text-xs text-slate-500 uppercase font-bold">Total de Missões</p>
+                    <h3 id="total-missions" class="text-3xl font-black text-slate-800">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
+                    <p class="text-xs text-red-500 uppercase font-bold">Risco Alto</p>
+                    <h3 id="high-risk-count" class="text-3xl font-black text-red-600">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-yellow-500">
+                    <p class="text-xs text-yellow-500 uppercase font-bold">Risco Médio</p>
+                    <h3 id="mid-risk-count" class="text-3xl font-black text-yellow-600">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
+                    <p class="text-xs text-green-500 uppercase font-bold">Risco Baixo</p>
+                    <h3 id="low-risk-count" class="text-3xl font-black text-green-600">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <section id="history" class="bg-white p-6 rounded-xl shadow-sm mb-16 border border-slate-200">
+            <h2 class="text-2xl font-bold mb-6 text-slate-900">3. Histórico Recente (API/Docker)</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left">
+                    <thead class="bg-slate-50 text-slate-600 uppercase">
+                    <tr>
+                        <th class="p-4">Data/Hora</th>
+                        <th class="p-4">Piloto</th>
+                        <th class="p-4">Risco</th>
+                        <th class="p-4 text-center">Scores (S|C|E|R)</th>
+                    </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-100">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 pt-8 border-t border-slate-200 opacity-60">
+            <p><strong>Matheus Guerra</strong> | Aviation Safety M.Sc. (ITA)</p>
+        </footer>
+    </main>
+</div>
+
+<script>
+    // Configuração da API (Porta 8081 do seu Spring Boot)
+    const API_BASE_URL = 'http://localhost:8081/api/v1/safety';
+
+    const checklistData = [
+        { id: 'health', title: 'Saúde do Piloto', items: [{id:'h1', text:'Desjejum?'}, {id:'h2', text:'Hidratação?'}, {id:'h3', text:'Fadiga?'}] },
+        { id: 'climate', title: 'Meteorologia', items: [{id:'c1', text:'Vento?'}, {id:'c2', text:'Umidade?'}, {id:'c3', text:'Mudança Súbita?'}] },
+        { id: 'envelope', title: 'Envelope (Aeronave)', items: [{id:'e1', text:'Altura de voo?'}, {id:'e2', text:'Bicos?'}, {id:'e3', text:'Pressão?'}] },
+        { id: 'risk', title: 'Gerenciamento de Risco', items: [{id:'r1', text:'Zonas de Buffer?'}, {id:'r2', text:'Áreas Sensíveis?'}, {id:'r3', text:'Equipe de Solo?'}] }
+    ];
+
+    let state = { itemStates: {} };
+    let saRadarChart = null;
+
+    // --- INICIALIZAÇÃO ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderChecklist();
+        initializeChart();
+        carregarHistorico();
+    });
+
+    function renderChecklist() {
+        const container = document.getElementById('accordion-container');
+        checklistData.forEach(cat => {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg border border-slate-200 overflow-hidden';
+            div.innerHTML = `<div class="bg-slate-50 p-4 font-bold border-b">${cat.title}</div>`;
+
+            const list = document.createElement('div');
+            cat.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.id = `cont-${item.id}`;
+                itemDiv.className = 'checklist-item-container p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50';
+                itemDiv.innerHTML = `<span>${item.text}</span><span id="icon-${item.id}">◯</span>`;
+                itemDiv.onclick = () => toggleItem(item.id);
+                list.appendChild(itemDiv);
+            });
+            div.appendChild(list);
+            container.appendChild(div);
+        });
+    }
+
+    function toggleItem(id) {
+        const current = state.itemStates[id] || 'unmarked';
+        const next = current === 'unmarked' ? 'checked' : (current === 'checked' ? 'negative' : 'unmarked');
+        state.itemStates[id] = next;
+
+        const cont = document.getElementById(`cont-${id}`);
+        const icon = document.getElementById(`icon-${id}`);
+
+        cont.classList.remove('checked', 'negative');
+        if(next === 'checked') { cont.classList.add('checked'); icon.innerText = '✅'; }
+        else if(next === 'negative') { cont.classList.add('negative'); icon.innerText = '❌'; }
+        else icon.innerText = '◯';
+
+        updateChart();
+    }
+
+    // --- GRÁFICOS ---
+    function initializeChart() {
+        const ctx = document.getElementById('saRadarChart').getContext('2d');
+        saRadarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Saúde', 'Clima', 'Envelope', 'Risco'],
+                datasets: [{
+                    label: 'Nível de Prontidão %',
+                    data: [0, 0, 0, 0],
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    borderColor: '#0ea5e9',
+                    borderWidth: 2
+                }]
+            },
+            options: { scales: { r: { min: 0, max: 100 } } }
+        });
+    }
+
+    function updateChart() {
+        const scores = checklistData.map(cat => {
+            const total = cat.items.length;
+            const ok = cat.items.filter(it => state.itemStates[it.id] === 'checked').length;
+            return Math.round((ok / total) * 100);
+        });
+        saRadarChart.data.datasets[0].data = scores;
+        saRadarChart.update();
+    }
+
+    // --- COMUNICAÇÃO COM API (BACKEND JAVA) ---
+    document.getElementById('save-db-button').addEventListener('click', async () => {
+        const getRawScore = (catIdx) => {
+            const cat = checklistData[catIdx];
+            return cat.items.filter(it => state.itemStates[it.id] === 'checked').length;
+        };
+
+        const payload = {
+            pilotName: "Cmte. Matheus Guerra",
+            healthScore: getRawScore(0),
+            weatherScore: getRawScore(1),
+            aircraftScore: getRawScore(2),
+            missionScore: getRawScore(3)
+        };
+
+        try {
+            const response = await fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(`✅ SALVO! Risco Calculado: ${result.riskLevel}`);
+                carregarHistorico();
+            } else {
+                const error = await response.json();
+                alert(`❌ BLOQUEIO: ${error.message}`);
+            }
+        } catch (e) {
+            alert("❌ ERRO: Verifique se a API Java está rodando na porta 8081.");
+        }
+    });
+
+    async function carregarHistorico() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/history`);
+            const dados = await response.json();
+
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+
+            let h=0, m=0, l=0;
+
+            dados.reverse().slice(0, 10).forEach(v => {
+                if(v.riskLevel === 'HIGH') h++; else if(v.riskLevel === 'MEDIUM') m++; else l++;
+
+                tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-4 text-xs font-mono">${new Date(v.dateTime).toLocaleString()}</td>
+                            <td class="p-4 font-medium">${v.pilotName}</td>
+                            <td class="p-4 font-bold ${v.riskLevel === 'HIGH' ? 'text-red-500' : 'text-green-600'}">${v.riskLevel}</td>
+                            <td class="p-4 text-center">${v.healthScore}|${v.weatherScore}|${v.aircraftScore}|${v.missionScore}</td>
+                        </tr>`;
+            });
+
+            document.getElementById('total-missions').innerText = dados.length;
+            document.getElementById('high-risk-count').innerText = h;
+            document.getElementById('mid-risk-count').innerText = m;
+            document.getElementById('low-risk-count').innerText = l;
+
+        } catch (e) { console.error("Falha ao ler histórico."); }
+    }
+</script>
+</body>
+</html>
