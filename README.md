@@ -1,69 +1,60 @@
-🛫 Safety Management System (SMS) - Situational Awareness Tool
+# Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 
-Este projeto é uma Single Page Application (SPA) integrada a uma API REST, desenvolvida para elevar o nível de segurança operacional na aviação agrícola. A ferramenta automatiza o gerenciamento de risco pré-voo, transformando conceitos complexos de Fatores Humanos em dados acionáveis.
+Esta aplicação é uma solução **Full Stack** desenvolvida para elevar o nível de segurança operacional na aviação. O sistema automatiza o gerenciamento de risco pré-voo, transformando conceitos complexos de **Fatores Humanos** em dados acionáveis através de uma API REST e uma interface interativa.
 
-🧠 Contexto e Fundamentação
+## 🧠 Fundamentação Científica
 
-A base lógica desta aplicação deriva de pesquisas acadêmicas em Segurança de Voo e Aeronavegabilidade Continuada (Mestrado - ITA). O foco central é a Consciência Situacional (SA), estruturada nos três níveis de Endsley:
+A base lógica deriva de pesquisas em **Segurança de Voo e Aeronavegabilidade Continuada (Mestrado - ITA)**. A ferramenta foca na **Consciência Situacional (SA)**, estruturada nos três níveis de Endsley:
+1. **Percepção**: Coleta de dados (Saúde, Clima, Aeronave).
+2. **Compreensão**: Processamento do impacto desses fatores.
+3. **Projeção**: Cálculo automatizado do nível de risco para a missão.
 
-Percepção: Coleta de dados de saúde, meteorologia e envelope.
+---
 
-Compreensão: Processamento do impacto desses fatores na operação.
+## 🚀 Tecnologias e Infraestrutura
 
-Projeção: Cálculo automatizado do nível de risco para a missão.
+### Backend (O Motor de Decisão)
 
-🚀 Tecnologias Utilizadas
+* **Java 17 & Spring Boot 3.4.2**: Core estável para sistemas de missão crítica.
+* **Spring Data JPA**: Abstração de persistência e regras de negócio.
+* **PostgreSQL (Docker)**: Banco de dados relacional rodando em container para isolamento e portabilidade.
+* **Swagger/OpenAPI 3**: Documentação interativa para auditoria de endpoints.
 
-Backend (O Motor de Decisão)
-Java 17 / Spring Boot 3: Estrutura robusta para sistemas de missão crítica.
+### Frontend (O Painel de Instrumentos)
 
-Spring Data JPA: Abstração de persistência de dados.
+* **HTML5 & Tailwind CSS**: Interface responsiva com foco na experiência do piloto.
+* **Chart.js**: Feedback visual via gráfico radar para prontidão operacional.
+* **JavaScript (Async/Await)**: Comunicação assíncrona com a API REST.
 
-PostgreSQL: Banco de dados relacional para garantir a integridade e rastreabilidade das missões.
+---
 
-Spring Security (CORS): Configuração de segurança para integração entre domínios.
+## 🏗️ Arquitetura do Sistema
 
-Frontend (O Painel de Instrumentos)
-HTML5 / Tailwind CSS: Interface responsiva e moderna.
+O projeto segue o padrão de camadas para facilitar a escalabilidade e manutenção:
+* **Model**: Entidades de segurança (Assessments).
+* **Service**: O "Cérebro" onde as regras de Fatores Humanos aplicam o cálculo de `riskLevel`.
+* **Controller**: Endpoints REST documentados via Swagger.
+* **Repository**: Comunicação persistente com o PostgreSQL.
 
-Chart.js: Visualização de dados através de gráfico radar para prontidão operacional.
+---
 
-JavaScript (Async/Await): Comunicação assíncrona com a API.
+## 🛠️ Funcionalidades Principais
 
-🏗️ Arquitetura do Sistema
+* **Checklist Interativo**: Avaliação baseada em 4 pilares (Saúde, Clima, Aeronave e Missão).
+* **Cálculo de Risco em Tempo Real**: Diagnóstico automatizado (BAIXO, MÉDIO, ALTO).
+* **Bloqueio de Segurança**: Impede o registro de missões críticas sem mitigação (Conformidade SMS).
+* **Persistência de Histórico**: Registro rastreável para análise de tendências e auditorias.
 
-O projeto segue o padrão de camadas para facilitar a manutenção e escalabilidade:
+---
 
-Model: Representação das entidades de segurança (Assessments).
+## 🔧 Execução via Docker (Procedimento Rápido)
 
-Repository: Interface de comunicação imutável com o banco de dados.
+1. **Subir Infraestrutura**: `docker-compose up -d` (PostgreSQL na porta 5433).
+2. **Rodar API**: `./mvnw spring-boot:run` (Porta 8081).
+3. **Documentação**: Acesse `/swagger-ui/index.html` para testes interativos.
 
-Service: O "Cérebro" do sistema, onde as regras de Fatores Humanos são aplicadas para calcular o riskLevel.
+---
 
-Controller: Endpoints REST que expõem as funcionalidades de registro e histórico.
+## 👨‍✈️ Sobre o Autor
 
-🛠️ Funcionalidades Principais
-
-Checklist Interativo: Avaliação baseada em 4 pilares críticos (Saúde, Clima, Envelope e Gerenciamento de Risco).
-
-Cálculo de Risco em Tempo Real: O backend processa as variáveis e retorna um diagnóstico (BAIXO, MÉDIO, ALTO).
-
-Histórico de Missões: Registro persistente para análise de tendências e auditorias de segurança (SMS).
-
-Gráfico Radar de SA: Feedback visual imediato para o piloto sobre sua prontidão.
-
-🔧 Configuração e Execução
-
-Clone o repositório: git clone ...
-
-Configure o banco de dados: Crie um banco safety_db no PostgreSQL.
-
-Ajuste o application.properties: Insira suas credenciais do banco.
-
-Execute o Backend: Rode a classe SafetyChecklistApiApplication.
-
-Acesse o Frontend: Abra o index.html localmente ou via servidor web.
-
-👨‍✈️ Sobre o Autor
-
-Matheus Guerra Mestre em Segurança de Voo e Aeronavegabilidade Continuada pelo ITA. Piloto e Instrutor de Aviação Civil, atualmente unindo a bagagem técnica do setor aeronáutico com a engenharia de software para criar soluções que salvam vidas e otimizam operações críticas.
+**Matheus Guerra** Mestre em Segurança e Aeronavegabilidade Continuada pelo **ITA**. Piloto e Instrutor de Aviação Civil, unindo a experiência de cockpit com a engenharia de software para criar soluções que salvam vidas.
