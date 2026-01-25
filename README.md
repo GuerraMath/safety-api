@@ -51,6 +51,78 @@ Painel do Piloto: Acesse o arquivo index.html (conectado à porta 8081).
 
 Swagger UI: Acesse http://localhost:8081/swagger-ui/index.html.
 
+##🛠️ Exemplos de Uso da API (Endpoints)
+
+Abaixo estão os principais cenários de teste para validação da lógica de segurança operacional.
+
+1. Registrar Avaliação de Risco (POST)
+Endpoint: POST http://localhost:8081/api/v1/safety
+
+Cenário A: Voo Normal (Risco Baixo)
+Simula uma operação onde todos os indicadores estão nominais.
+
+Request Body:
+
+JSON
+{
+  "pilotName": "Cmte. Matheus Guerra",
+  "healthScore": 1,
+  "weatherScore": 1,
+  "aircraftScore": 1,
+  "missionScore": 1,
+  "mitigationPlan": "Voo de teste nominal"
+}
+Resposta Esperada: 200 OK
+
+JSON Response: { "riskLevel": "LOW", ... }
+
+Cenário B: Risco Alto SEM Mitigação (Teste de Bloqueio)
+Este cenário testa o GlobalExceptionHandler que criamos. O sistema deve impedir o registro se o risco for alto e o plano de mitigação estiver vazio.
+
+Request Body:
+
+JSON
+{
+  "pilotName": "Cmte. Matheus Guerra",
+  "healthScore": 5,
+  "weatherScore": 5,
+  "aircraftScore": 5,
+  "missionScore": 5,
+  "mitigationPlan": ""
+}
+Resposta Esperada: 400 Bad Request
+
+JSON Response (Custom Error):
+
+JSON
+{
+  "timestamp": "2026-01-25T...",
+  "status": 400,
+  "error": "Bloqueio de Segurança Operacional",
+  "message": "ALERTA: Risco ALTO detectado. Informe o plano de mitigação para prosseguir."
+}
+2. Consulta de Histórico e Auditoria (GET)
+Endpoint: GET http://localhost:8081/api/v1/safety/history
+
+Retorna todas as missões registradas no banco de dados para fins de análise de tendência (SMS).
+
+Resposta Esperada: 200 OK
+
+JSON Response:
+
+JSON
+
+  {
+    "id": 1,
+    "dateTime": "2026-01-25T10:00:00",
+    "pilotName": "Cmte. Matheus Guerra",
+    "riskLevel": "LOW",
+    "healthScore": 1,
+    "weatherScore": 1,
+    "aircraftScore": 1,
+    "missionScore": 1
+  }
+
 ---
 
 ## 👨‍✈️ Sobre o Autor
