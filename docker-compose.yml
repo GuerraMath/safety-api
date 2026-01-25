@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: safety_postgres
+    ports:
+      - "5433:5432"  # <--- MUDANÇA AQUI (Porta externa 5433)
+    environment:
+      - POSTGRES_DB=safety_db
+      - POSTGRES_USER=piloto
+      - POSTGRES_PASSWORD=seguranca
+    volumes:
+      - safety_volume_final:/var/lib/postgresql/data
+
+volumes:
+  safety_volume_final:

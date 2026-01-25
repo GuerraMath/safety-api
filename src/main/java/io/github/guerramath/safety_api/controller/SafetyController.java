@@ -1,5 +1,7 @@
 package io.github.guerramath.safety_api.controller;
 
+import org.springframework.http.ResponseEntity;
+import io.github.guerramath.safety_api.dto.SafetyAssessmentDTO;
 import io.github.guerramath.safety_api.model.SafetyAssessment;
 import io.github.guerramath.safety_api.service.SafetyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,10 @@ public class SafetyController {
     @Autowired
     private SafetyService service;
 
-    @PostMapping("/check")
-    public SafetyAssessment registrar(@RequestBody SafetyAssessment assessment) {
-        return service.salvarAvaliacao(assessment);
+    @PostMapping
+    public ResponseEntity<SafetyAssessment> criarAvaliacao(@RequestBody SafetyAssessmentDTO dto) {
+        SafetyAssessment novaAvaliacao = service.salvarAvaliacao(dto);
+        return ResponseEntity.ok(novaAvaliacao);
     }
 
     @GetMapping("/history")

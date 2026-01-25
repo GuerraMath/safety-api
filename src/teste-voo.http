@@ -1,0 +1,15 @@
+### 1. Criar um Voo com o Nome do Piloto
+POST http://localhost:8081/api/v1/safety
+Content-Type: application/json
+
+{
+  "pilotName": "Cmte. Matheus Guerra",
+  "healthScore": 1,
+  "weatherScore": 1,
+  "aircraftScore": 1,
+  "missionScore": 1,
+  "mitigationPlan": "Voo de teste com banco novo"
+}
+
+### 2. Ler o Histórico (Auditoria)
+GET http://localhost:8081/api/v1/safety/history

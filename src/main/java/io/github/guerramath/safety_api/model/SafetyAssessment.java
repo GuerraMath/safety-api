@@ -1,7 +1,7 @@
-package io.github.guerramath.safety_api.model; // Define a localização exata do arquivo
+package io.github.guerramath.safety_api.model;
 
-import jakarta.persistence.*; // Importa as anotações de banco de dados (Entity, Table, Id, etc)
-import java.time.LocalDateTime; // Necessário para o campo de data e hora
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assessments")
@@ -20,15 +20,13 @@ public class SafetyAssessment {
     private Integer aircraftScore;
     private Integer missionScore;
 
-    private String riskLevel; // LOW, MEDIUM, HIGH
-    private String comments;
+    @Enumerated(EnumType.STRING)
+    private RiskLevel riskLevel; // Agora é do tipo Enum, não String
 
-    // Construtores, Getters e Setters virão aqui em seguida
-
-    // Construtor Vazio (Obrigatório para o JPA)
+    // Construtor Vazio
     public SafetyAssessment() {}
 
-    // Getters e Setters (Essenciais para o tráfego de dados)
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -47,9 +45,17 @@ public class SafetyAssessment {
     public Integer getMissionScore() { return missionScore; }
     public void setMissionScore(Integer missionScore) { this.missionScore = missionScore; }
 
-    public String getRiskLevel() { return riskLevel; }
-    public void setRiskLevel(String riskLevel) { this.riskLevel = riskLevel; }
-
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
-  }
+
+    // --- AQUI ESTAVA O ERRO: Removemos a versão String ---
+
+    // Mantemos APENAS esta versão correta com o Enum:
+    public RiskLevel getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(RiskLevel riskLevel) {
+        this.riskLevel = riskLevel;
+    }
+}
