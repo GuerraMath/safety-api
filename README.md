@@ -53,7 +53,7 @@ Abaixo estão os principais cenários de teste para validação da lógica de se
 #### **Cenário A: Voo Normal (Risco Baixo)**
 Simula uma operação onde todos os indicadores estão nominais.
 * **Request Body:**
-```json
+``json
 {
   "pilotName": "Cmte. Matheus Guerra",
   "healthScore": 1,
@@ -97,10 +97,7 @@ Endpoint: GET http://localhost:8081/api/v1/safety/history Retorna todas as miss�
 
 ## 👨‍✈️ Sobre o Autor
 
-**Matheus Guerra**
-*Mestre em Segurança e Aeronavegabilidade Continuada pelo ITA. Piloto e Instrutor de Aviação Civil, unindo a bagagem técnica aeronáutica com a engenharia de software para salvar vidas.*
+**Matheus Guerra** Mestre em Segurança e Aeronavegabilidade Continuada pelo ITA. Piloto e Instrutor de Aviação Civil, unindo a bagagem técnica aeronáutica com a engenharia de software para salvar vidas.
 
-> [!TIP]
-> Conecte-se comigo para trocar experiências sobre Safety e Desenvolvimento:
-> [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](LINK_DO_SEU_PERFIL)
-> [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GuerraMath)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](LINK_DO_SEU_PERFIL)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GuerraMath)
