@@ -88,20 +88,19 @@ JSON
   "status": 400,
   "error": "Bloqueio de Segurança Operacional",
   "message": "ALERTA: Risco ALTO detectado. Informe o plano de mitigação para prosseguir."
-}```
+}
 
 2. Consulta de Histórico (GET)
 Endpoint: GET http://localhost:8081/api/v1/safety/history Retorna todas as missões para análise de tendência (SMS).
 
-👨‍✈️ Sobre o Autor
-Matheus Guerra — Mestre em Segurança e Aeronavegabilidade Continuada pelo ITA. Piloto e Instrutor de Aviação Civil, unindo a bagagem técnica aeronáutica com a engenharia de software para salvar vidas.
-
-
 ---
 
+## 👨‍✈️ Sobre o Autor
 
+**Matheus Guerra**
+*Mestre em Segurança e Aeronavegabilidade Continuada pelo ITA. Piloto e Instrutor de Aviação Civil, unindo a bagagem técnica aeronáutica com a engenharia de software para salvar vidas.*
 
-### ✅ Checklist de "Pouso" Concluído
-1.  **Versão do Maven**: Documentada (3.4.2).
-2.  **Portas**: Documentadas (5433 para DB, 8081 para API).
-3.  **Cenários de Teste**: Incluídos (Essencial para o Postman).
+> [!TIP]
+> Conecte-se comigo para trocar experiências sobre Safety e Desenvolvimento:
+> [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](LINK_DO_SEU_PERFIL)
+> [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GuerraMath)
