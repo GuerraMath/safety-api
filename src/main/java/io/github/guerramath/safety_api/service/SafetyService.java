@@ -64,4 +64,7 @@ public class SafetyService {
     public List<SafetyAssessment> buscarTodos() {
         return repository.findAll();
     }
+    public List<SafetyAssessment> getHistory() {
+        return repository.findAll(); // Retorna todos os registros para a auditoria
+    }
 }
