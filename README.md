@@ -1,6 +1,6 @@
 ##Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 
-Esta aplicação é uma solução Full Stack de missão crítica, desenvolvida para elevar o nível de segurança operacional na aviação. O sistema automatiza o gerenciamento de risco pré-voo, integrando pesquisas acadêmicas de Fatores Humanos com engenharia de software moderna.
+Projeto desenvolvido individualmente, do levantamento de requisitos à implementação backend e frontend. Esta aplicação é uma solução Full Stack de missão crítica, desenvolvida para elevar o nível de segurança operacional na aviação. O sistema automatiza o gerenciamento de risco pré-voo, integrando pesquisas acadêmicas de Fatores Humanos com engenharia de software moderna.
 
 ##🧠 Fundamentação Científica
 
