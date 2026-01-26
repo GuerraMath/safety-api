@@ -9,6 +9,7 @@ Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 
 ## Interface do Sistema
 ![Preview do Dashboard](./assets/dashboard-preview.png)
+- Dashboard de avaliação de riscos e prontidão da equipe. Interface responsiva tipo check-list com rastreabilidade e função de impressão, integrada via API.
 
 ## 📌 Sobre o Projeto
 
