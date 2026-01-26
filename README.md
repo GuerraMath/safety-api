@@ -143,11 +143,9 @@ Clone o repositório:
 git clone [https://github.com/GuerraMath/safety-api.git](https://github.com/GuerraMath/safety-api.git)
 
 cd safety-api
-
+```
 Suba o ambiente (Database + API):
 ```
-
-```Bash
  docker-compose up -d
 
 Acesse o Dashboard: Abra seu navegador em: http://localhost:8081
