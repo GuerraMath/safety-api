@@ -7,6 +7,9 @@ Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 ![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
 ![CI](https://github.com/GuerraMath/safety-api/actions/workflows/ci.yml/badge.svg)
 
+## Interface do Sistema
+![Preview do Dashboard](./assets/dashboard-preview.png)
+
 ## 📌 Sobre o Projeto
 
 O **SMS (Safety Management System) Tool** é uma solução de software desenvolvida para elevar a **Consciência Situacional (SA)** de pilotos e gestores de aviação antes da execução de missões.
