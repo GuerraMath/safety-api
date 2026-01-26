@@ -140,21 +140,21 @@ Docker & Docker Compose instalados.
 Clone o repositório:
 
 ```Bash
-
 git clone [https://github.com/GuerraMath/safety-api.git](https://github.com/GuerraMath/safety-api.git)
 
 cd safety-api
 
-Suba o ambiente (Database + API):```
+Suba o ambiente (Database + API):
+```
 
 ```Bash
+ docker-compose up -d
 
-docker-compose up -d
-
-Acesse o Dashboard: Abra seu navegador em: http://localhost:8081```
+Acesse o Dashboard: Abra seu navegador em: http://localhost:8081
+```
 
 👤 Autor
-
+```
 // Matheus Guerra
 
 Mestre em Segurança de Aviação e Aeronavegabilidade Continuada (ITA - Instituto Tecnológico de Aeronáutica).
@@ -162,6 +162,6 @@ Mestre em Segurança de Aviação e Aeronavegabilidade Continuada (ITA - Institu
 Piloto e Instrutor de Aviação Civil.
 
 Desenvolvedor de Software com foco em Sistemas Críticos (Java/Spring).
-
+```
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/guerramatheus)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GuerraMath)
