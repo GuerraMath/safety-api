@@ -3,225 +3,327 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>SMS - Situational Awareness Tool | Cmte. Matheus Guerra</title>
+    <title>SMS - Situational Awareness & Audit Tool</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .chart-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; height: 350px; }
-        .checklist-item-container { border-left-width: 4px; border-left-color: #cbd5e1; transition: all 0.2s ease; }
-        .checklist-item-container.checked { background-color: #f0fdf4; border-left-color: #22c55e; }
-        .checklist-item-container.negative { background-color: #fff1f2; border-left-color: #ef4444; }
-        @media print { .no-print { display: none !important; } }
+        .chart-wrapper { position: relative; width: 100%; height: 260px; }
+        .checklist-item { border-left-width: 4px; border-left-color: #e2e8f0; transition: all 0.2s; }
+        .checklist-item.checked { background-color: #f0fdf4; border-left-color: #22c55e; }
+        .checklist-item.negative { background-color: #fef2f2; border-left-color: #ef4444; }
+
+        /* REGRAS DE IMPRESSÃO (PDF) */
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; }
+            .container { max-width: 100%; padding: 0; }
+            /* Força a impressão dos gráficos e cores de fundo */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            /* Ajuste de layout para evitar quebras ruins */
+            main, aside { page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-<div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
-    <header class="no-print text-center mb-12 border-b pb-6">
-        <h1 class="text-3xl md:text-4xl font-bold text-slate-900 uppercase tracking-tight">SMS - Situational Awareness Tool</h1>
-        <p class="mt-2 text-lg text-sky-600 font-medium italic">Matheus Guerra | Aviation Safety M.Sc. (ITA)</p>
+<div class="container mx-auto p-4 lg:p-8 max-w-[1600px]">
+    <header class="mb-8 border-b border-slate-200 pb-6 flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">SMS Dashboard</h1>
+            <p class="text-sky-600 font-bold text-xs tracking-widest uppercase mt-1">Safety Management System | M.Sc. ITA</p>
+        </div>
+        <div class="text-right hidden sm:block no-print">
+            <p class="text-xs text-slate-400 font-mono">API STATUS: <span id="api-status" class="text-yellow-500 font-bold">CONNECTING...</span></p>
+        </div>
     </header>
 
-    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
 
-        <section id="checklist">
-            <h2 class="text-xl font-bold mb-6 text-slate-700 flex items-center">
-                <span class="mr-2">📋</span> 1. Check-list Interativo (SA Níveis 1, 2 e 3)
-            </h2>
-            <div id="accordion-container" class="space-y-4"></div>
+        <main class="xl:col-span-7 flex flex-col gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 print:shadow-none print:border-none">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                    <span class="bg-slate-100 text-slate-600 p-2 rounded-lg mr-3 text-xl no-print">📋</span>
+                    1. Check-list de Prontidão (20 Itens)
+                </h2>
+                <div id="accordion-container" class="space-y-4"></div>
+            </div>
 
-            <div class="no-print mt-8 flex flex-wrap gap-3">
-                <button id="save-db-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-transform hover:scale-105">
-                    FINALIZAR E SALVAR NA API
+            <div class="flex flex-wrap gap-4 no-print">
+                <button id="save-db-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-lg transition-transform hover:scale-[1.01] flex justify-center items-center gap-2 min-w-[200px]">
+                    <span>💾</span> SALVAR OPERAÇÃO
                 </button>
-                <button id="reset-button" onclick="location.reload()" class="bg-slate-300 hover:bg-slate-400 text-slate-700 font-bold py-3 px-6 rounded-lg transition-all">
-                    REDEFINIR
+
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-colors flex items-center gap-2">
+                    <span>🖨️</span> PDF / IMPRIMIR
+                </button>
+
+                <button onclick="location.reload()" class="bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-4 px-6 rounded-xl transition-colors">
+                    ↺ LIMPAR
                 </button>
             </div>
-        </section>
+        </main>
 
-        <section class="space-y-8">
-            <div id="summary" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-center mb-4 text-slate-700">2. Radar de Prontidão Operacional</h2>
-                <div class="chart-container">
-                    <canvas id="saRadarChart"></canvas>
+        <aside class="xl:col-span-5 flex flex-col gap-6">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 print:border-slate-300">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-2">Consciência Situacional</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="saRadarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 print:border-slate-300">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-2">Distribuição de Risco</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="riskDistChart"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-slate-400 text-center">
-                    <p class="text-[10px] text-slate-500 uppercase font-black">Total de Missões</p>
-                    <h3 id="total-missions" class="text-2xl font-black">0</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-white p-4 rounded-xl border-l-4 border-slate-400 shadow-sm print:border-slate-400">
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Total</p>
+                    <h4 id="total-missions" class="text-2xl font-black text-slate-700">0</h4>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-red-500 text-center">
-                    <p class="text-[10px] text-red-500 uppercase font-black">Alertas HIGH</p>
-                    <h3 id="high-risk-count" class="text-2xl font-black text-red-600">0</h3>
+                <div class="bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-sm print:border-red-500">
+                    <p class="text-[10px] font-black text-red-500 uppercase">Alto</p>
+                    <h4 id="high-risk-count" class="text-2xl font-black text-red-600">0</h4>
+                </div>
+                <div class="bg-white p-4 rounded-xl border-l-4 border-yellow-500 shadow-sm print:border-yellow-500">
+                    <p class="text-[10px] font-black text-yellow-500 uppercase">Médio</p>
+                    <h4 id="mid-risk-count" class="text-2xl font-black text-yellow-600">0</h4>
+                </div>
+                <div class="bg-white p-4 rounded-xl border-l-4 border-green-500 shadow-sm print:border-green-500">
+                    <p class="text-[10px] font-black text-green-500 uppercase">Baixo</p>
+                    <h4 id="low-risk-count" class="text-2xl font-black text-green-600">0</h4>
                 </div>
             </div>
-        </section>
 
-        <section id="history" class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-700 mb-6">3. Histórico de Auditoria</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left">
-                    <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-black">
-                    <tr>
-                        <th class="p-4">Data/Hora</th>
-                        <th class="p-4">Risco</th>
-                        <th class="p-4">Scores (H|W|A|M)</th>
-                    </tr>
-                    </thead>
-                    <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
-                </table>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-1">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Histórico Recente</h2>
+                    <button id="btn-export" class="text-[10px] font-black bg-slate-800 text-white px-3 py-2 rounded hover:bg-black uppercase no-print">
+                        Exportar CSV
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black border-b border-slate-100">
+                        <tr>
+                            <th class="pb-3 pl-2">Data</th>
+                            <th class="pb-3">Risco</th>
+                            <th class="pb-3 text-right">Scores (H|W|A|M)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>
             </div>
-        </section>
-    </main>
+        </aside>
+    </div>
 </div>
 
 <script>
     const API_BASE_URL = 'http://localhost:8081/api/v1/safety';
 
-    // Checklist Restaurado com os 20 itens originais
+    // DADOS MESTRES DO CHECKLIST (4 Categorias x 5 Itens = 20 Itens Totais)
     const checklistData = [
         {
-            id: 'health',
-            title: 'Saúde do Piloto',
+            id: 'health', title: 'SAÚDE (Fatores Humanos)',
             items: [
-                {id:'h1', text:'Desjejum adequado?'},
-                {id:'h2', text:'Água potável a bordo?'},
-                {id:'h3', text:'Sinais de fadiga?'},
-                {id:'h4', text:'Álcool/Drogas (24-48h)?'},
-                {id:'h5', text:'Uniforme e EPIs?'}
+                {id:'h1', text:'Repouso adequado (8h)?'}, {id:'h2', text:'Hidratação/Alimentação?'},
+                {id:'h3', text:'Nível de estresse/Fadiga?'}, {id:'h4', text:'Medicamentos ou Álcool?'},
+                {id:'h5', text:'Equipamento (EPI) completo?'}
             ]
         },
         {
-            id: 'climate',
-            title: 'Meteorologia',
+            id: 'climate', title: 'METEOROLOGIA (Ambiente)',
             items: [
-                {id:'c1', text:'Temperatura adequada?'},
-                {id:'c2', text:'Umidade relativa?'},
-                {id:'c3', text:'Vento dentro dos limites?'},
-                {id:'c4', text:'Pressão atmosférica?'},
-                {id:'c5', text:'Mudanças súbitas?'}
+                {id:'c1', text:'Vento dentro do envelope?'}, {id:'c2', text:'Visibilidade/Teto?'},
+                {id:'c3', text:'Temperatura/Umidade?'}, {id:'c4', text:'Previsão de mudança?'},
+                {id:'c5', text:'Turbulência esperada?'}
             ]
         },
         {
-            id: 'envelope',
-            title: 'Envelope (Aeronave)',
+            id: 'envelope', title: 'AERONAVE (Máquina)',
             items: [
-                {id:'e1', text:'Altura de voo?'},
-                {id:'e2', text:'Bicos limpos?'},
-                {id:'e3', text:'Pressão do sistema?'},
-                {id:'e4', text:'Volume de calda?'},
-                {id:'e5', text:'Composição otimizada?'}
+                {id:'e1', text:'Combustível suficiente?'}, {id:'e2', text:'Peso e Balanceamento?'},
+                {id:'e3', text:'Sistemas de pulverização?'}, {id:'e4', text:'Manutenção em dia?'},
+                {id:'e5', text:'Performance para pista?'}
             ]
         },
         {
-            id: 'risk',
-            title: 'Gerenciamento de Risco',
+            id: 'risk', title: 'MISSÃO (Operação)',
             items: [
-                {id:'r1', text:'Toxicidade conhecida?'},
-                {id:'r2', text:'Equipe treinada?'},
-                {id:'r3', text:'Áreas sensíveis?'},
-                {id:'r4', text:'Zonas de Buffer?'},
-                {id:'r5', text:'Comunicação solo?'}
+                {id:'r1', text:'Obstáculos mapeados?'}, {id:'r2', text:'Comunicação solo-ar?'},
+                {id:'r3', text:'Pressão de tempo?'}, {id:'r4', text:'Plano de contingência?'},
+                {id:'r5', text:'Áreas sensíveis próximas?'}
             ]
         }
     ];
 
-    let state = { itemStates: {} };
+    let state = { itemStates: {}, comments: {} };
     let saRadarChart = null;
+    let riskDistChart = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         renderChecklist();
-        initializeChart();
-        carregarHistorico();
+        initializeCharts();
+        carregarDashboard();
+        checkApiConnection();
     });
 
+    // --- RENDERIZAÇÃO DA UI ---
     function renderChecklist() {
         const container = document.getElementById('accordion-container');
         checklistData.forEach(cat => {
-            const div = document.createElement('div');
-            div.className = 'bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm';
-            div.innerHTML = `<div class="bg-slate-50 px-4 py-2 text-xs font-black uppercase text-slate-500 border-b">${cat.title}</div>`;
+            const group = document.createElement('div');
+            group.className = 'border-b border-slate-100 last:border-0 pb-4 mb-4';
+
+            group.innerHTML = `<h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">${cat.title}</h3>`;
+
             const list = document.createElement('div');
+            list.className = 'space-y-3';
+
             cat.items.forEach(item => {
                 const itemDiv = document.createElement('div');
                 itemDiv.id = `cont-${item.id}`;
-                itemDiv.className = 'checklist-item-container p-3 flex justify-between items-center cursor-pointer hover:bg-slate-50 text-sm';
-                itemDiv.innerHTML = `<span>${item.text}</span><span id="icon-${item.id}" class="opacity-30">◯</span>`;
-                itemDiv.onclick = () => toggleItem(item.id);
+                itemDiv.className = 'checklist-item p-3 rounded-r-lg bg-slate-50 hover:bg-slate-100 cursor-pointer print:bg-white print:border';
+
+                // Layout do Item: Texto + Status + Input de Comentário
+                itemDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-2" onclick="toggleItem('${item.id}')">
+                        <span class="text-sm font-medium text-slate-700">${item.text}</span>
+                        <span id="icon-${item.id}" class="text-lg grayscale opacity-40">⚪</span>
+                    </div>
+                    <input type="text"
+                        class="w-full text-xs bg-white border border-slate-200 rounded p-2 focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-300 print:border-none print:p-0"
+                        placeholder="Observações / Mitigação..."
+                        oninput="updateComment('${item.id}', this.value)"
+                        onclick="event.stopPropagation()"
+                    />
+                `;
                 list.appendChild(itemDiv);
             });
-            div.appendChild(list);
-            container.appendChild(div);
+            group.appendChild(list);
+            container.appendChild(group);
         });
     }
 
+    // --- LÓGICA DE ESTADO ---
     function toggleItem(id) {
         const current = state.itemStates[id] || 'unmarked';
-        state.itemStates[id] = current === 'unmarked' ? 'checked' : (current === 'checked' ? 'negative' : 'unmarked');
-        const cont = document.getElementById(`cont-${id}`);
-        const icon = document.getElementById(`icon-${id}`);
-        cont.classList.remove('checked', 'negative');
-        if(state.itemStates[id] === 'checked') { cont.classList.add('checked'); icon.innerText = '✅'; icon.classList.remove('opacity-30'); }
-        else if(state.itemStates[id] === 'negative') { cont.classList.add('negative'); icon.innerText = '❌'; icon.classList.remove('opacity-30'); }
-        else { icon.innerText = '◯'; icon.classList.add('opacity-30'); }
-        updateChart();
+        const next = current === 'unmarked' ? 'checked' : (current === 'checked' ? 'negative' : 'unmarked');
+        state.itemStates[id] = next;
+
+        updateItemUI(id, next);
+        updateRadar();
     }
 
-    function initializeChart() {
-        const ctx = document.getElementById('saRadarChart').getContext('2d');
-        saRadarChart = new Chart(ctx, {
+    function updateItemUI(id, status) {
+        const cont = document.getElementById(`cont-${id}`);
+        const icon = document.getElementById(`icon-${id}`);
+
+        cont.classList.remove('checked', 'negative');
+        icon.classList.add('grayscale', 'opacity-40');
+
+        if (status === 'checked') {
+            cont.classList.add('checked');
+            icon.innerText = '✅';
+            icon.classList.remove('grayscale', 'opacity-40');
+        } else if (status === 'negative') {
+            cont.classList.add('negative');
+            icon.innerText = '⛔';
+            icon.classList.remove('grayscale', 'opacity-40');
+        } else {
+            icon.innerText = '⚪';
+        }
+    }
+
+    function updateComment(id, value) {
+        state.comments[id] = value;
+    }
+
+    // --- GRÁFICOS (CHART.JS) ---
+    function initializeCharts() {
+        const ctxRadar = document.getElementById('saRadarChart').getContext('2d');
+        saRadarChart = new Chart(ctxRadar, {
             type: 'radar',
             data: {
                 labels: ['Saúde', 'Clima', 'Aeronave', 'Missão'],
                 datasets: [{
-                    label: 'Prontidão %',
+                    label: 'Prontidão',
                     data: [0, 0, 0, 0],
                     backgroundColor: 'rgba(14, 165, 233, 0.2)',
                     borderColor: '#0ea5e9',
-                    borderWidth: 3,
+                    borderWidth: 2,
                     pointBackgroundColor: '#0ea5e9'
                 }]
             },
             options: {
-                scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+                maintainAspectRatio: false,
+                scales: { r: { min: 0, max: 100, ticks: { display: false }, pointLabels: { font: { size: 10, weight: 'bold' } } } },
                 plugins: { legend: { display: false } }
+            }
+        });
+
+        const ctxRisk = document.getElementById('riskDistChart').getContext('2d');
+        riskDistChart = new Chart(ctxRisk, {
+            type: 'doughnut',
+            data: {
+                labels: ['Baixo', 'Médio', 'Alto'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } } }
             }
         });
     }
 
-    function updateChart() {
+    function updateRadar() {
         const scores = checklistData.map(cat => {
-            const total = cat.items.length;
-            const ok = cat.items.filter(it => state.itemStates[it.id] === 'checked').length;
-            return Math.round((ok / total) * 100);
+            const okItems = cat.items.filter(it => state.itemStates[it.id] === 'checked').length;
+            return Math.round((okItems / cat.items.length) * 100);
         });
 
-        const avgScore = scores.reduce((a,b) => a+b, 0) / 4;
-        let color = '#0ea5e9';
-        if(avgScore < 40) color = '#ef4444';
-        else if(avgScore < 75) color = '#f59e0b';
-        else color = '#22c55e';
-
         saRadarChart.data.datasets[0].data = scores;
+
+        const avg = scores.reduce((a,b)=>a+b,0)/4;
+        let color = '#0ea5e9';
+        if(avg < 40) color = '#ef4444';
+        else if(avg < 75) color = '#f59e0b';
+
         saRadarChart.data.datasets[0].borderColor = color;
+        saRadarChart.data.datasets[0].pointBackgroundColor = color;
         saRadarChart.data.datasets[0].backgroundColor = color + '33';
         saRadarChart.update();
     }
 
+    // --- COMUNICAÇÃO COM API ---
     document.getElementById('save-db-button').addEventListener('click', async () => {
+        const mitigationText = Object.entries(state.comments)
+            .filter(([_, txt]) => txt && txt.trim().length > 0)
+            .map(([id, txt]) => `[${id.toUpperCase()}]: ${txt}`)
+            .join(' | ');
+
         const payload = {
             pilotName: "Cmte. Matheus Guerra",
             healthScore: checklistData[0].items.filter(it => state.itemStates[it.id] === 'checked').length,
             weatherScore: checklistData[1].items.filter(it => state.itemStates[it.id] === 'checked').length,
             aircraftScore: checklistData[2].items.filter(it => state.itemStates[it.id] === 'checked').length,
-            missionScore: checklistData[3].items.filter(it => state.itemStates[it.id] === 'checked').length
+            missionScore: checklistData[3].items.filter(it => state.itemStates[it.id] === 'checked').length,
+            mitigationPlan: mitigationText
         };
 
         try {
@@ -230,35 +332,74 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if(res.ok) {
-                const result = await res.json();
-                alert(`Voo Autorizado! Risco: ${result.riskLevel}`);
-                carregarHistorico();
+
+            if (res.ok) {
+                const data = await res.json();
+                alert(`✅ OPERAÇÃO SALVA!\nNível de Risco: ${data.riskLevel}`);
+                carregarDashboard();
+                location.reload();
             } else {
-                const error = await res.json();
-                alert(`BLOQUEIO SMS: ${error.message}`);
+                const err = await res.json();
+                alert(`⛔ BLOQUEIO SMS:\n${err.message}`);
             }
-        } catch (e) { alert("Erro de conexão com a API."); }
+        } catch (e) {
+            alert("❌ Erro de conexão com o servidor.");
+        }
     });
 
-    async function carregarHistorico() {
+    async function carregarDashboard() {
         try {
             const res = await fetch(`${API_BASE_URL}/history`);
-            const dados = await res.json();
+            const data = await res.json();
+
             const tbody = document.getElementById('history-table-body');
             tbody.innerHTML = '';
-            dados.reverse().slice(0, 5).forEach(v => {
+
+            let counts = { HIGH: 0, MEDIUM: 0, LOW: 0, NO_GO: 0 };
+
+            data.reverse().slice(0, 50).forEach(row => {
+                if(counts[row.riskLevel] !== undefined) counts[row.riskLevel]++;
+
+                const date = new Date(row.dateTime).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+                const colorClass = row.riskLevel === 'HIGH' || row.riskLevel === 'NO_GO' ? 'text-red-600 font-black' : (row.riskLevel === 'MEDIUM' ? 'text-yellow-600 font-bold' : 'text-green-600 font-bold');
+
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors border-b">
-                        <td class="p-4 text-[10px] font-mono text-slate-400">${new Date(v.dateTime).toLocaleString()}</td>
-                        <td class="p-4 font-black text-[10px] ${v.riskLevel==='HIGH'?'text-red-500':'text-green-500'}">${v.riskLevel}</td>
-                        <td class="p-4 text-slate-500 font-mono">${v.healthScore}|${v.weatherScore}|${v.aircraftScore}|${v.missionScore}</td>
-                    </tr>`;
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                        <td class="py-3 pl-2 text-xs font-mono text-slate-500">${date}</td>
+                        <td class="py-3 text-xs ${colorClass}">${row.riskLevel}</td>
+                        <td class="py-3 text-right text-xs font-mono text-slate-400 tracking-tighter">${row.healthScore}|${row.weatherScore}|${row.aircraftScore}|${row.missionScore}</td>
+                    </tr>
+                `;
             });
-            document.getElementById('total-missions').innerText = dados.length;
-            document.getElementById('high-risk-count').innerText = dados.filter(d => d.riskLevel === 'HIGH').length;
-        } catch (e) { console.error("API Offline"); }
+
+            document.getElementById('total-missions').innerText = data.length;
+            document.getElementById('high-risk-count').innerText = counts.HIGH + counts.NO_GO;
+            document.getElementById('mid-risk-count').innerText = counts.MEDIUM;
+            document.getElementById('low-risk-count').innerText = counts.LOW;
+
+            riskDistChart.data.datasets[0].data = [counts.LOW, counts.MEDIUM, counts.HIGH + counts.NO_GO];
+            riskDistChart.update();
+
+        } catch (e) {
+            console.error("Falha ao carregar histórico", e);
+        }
     }
+
+    async function checkApiConnection() {
+        const statusEl = document.getElementById('api-status');
+        try {
+            await fetch(`${API_BASE_URL}/history`, { method: 'HEAD' });
+            statusEl.innerText = "ONLINE";
+            statusEl.className = "text-green-500 font-bold";
+        } catch {
+            statusEl.innerText = "OFFLINE";
+            statusEl.className = "text-red-500 font-bold";
+        }
+    }
+
+    document.getElementById('btn-export').addEventListener('click', () => {
+        window.location.href = `${API_BASE_URL}/export`;
+    });
 </script>
 </body>
 </html>
