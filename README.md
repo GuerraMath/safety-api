@@ -139,23 +139,23 @@ Docker & Docker Compose instalados.
 
 Clone o repositório:
 
-´´´Bash
+```Bash
 
 git clone [https://github.com/GuerraMath/safety-api.git](https://github.com/GuerraMath/safety-api.git)
 
 cd safety-api
 
-Suba o ambiente (Database + API):´´´
+Suba o ambiente (Database + API):```
 
-´´´Bash
+```Bash
 
 docker-compose up -d
 
-Acesse o Dashboard: Abra seu navegador em: http://localhost:8081´´´
+Acesse o Dashboard: Abra seu navegador em: http://localhost:8081```
 
 👤 Autor
 
-Matheus Guerra
+// Matheus Guerra
 
 Mestre em Segurança de Aviação e Aeronavegabilidade Continuada (ITA - Instituto Tecnológico de Aeronáutica).
 
