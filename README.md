@@ -1,135 +1,102 @@
-##Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
+Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 
-Projeto desenvolvido individualmente, do levantamento de requisitos à implementação backend e frontend. Esta aplicação é uma solução Full Stack de missão crítica, desenvolvida para elevar o nível de segurança operacional na aviação. O sistema automatiza o gerenciamento de risco pré-voo, integrando pesquisas acadêmicas de Fatores Humanos com engenharia de software moderna.
+Projeto desenvolvido individualmente por Matheus Guerra, do levantamento de requisitos à implementação. Esta aplicação é uma solução Full Stack de missão crítica, desenvolvida para elevar o nível de segurança operacional na aviação. O sistema automatiza o gerenciamento de risco pré-voo, integrando pesquisas acadêmicas de Fatores Humanos com engenharia de software moderna.
 
-##🧠 Fundamentação Científica
+🧠 Fundamentação Científica
 
-A base lógica deriva de pesquisas em Segurança de Voo e Aeronavegabilidade Continuada (Mestrado - ITA). A ferramenta foca na Consciência Situacional (SA), estruturada nos três níveis de Endsley:
+A base lógica deriva de pesquisas em Segurança de Voo e Aeronavegabilidade Continuada realizadas no ITA. A ferramenta foca na Consciência Situacional (SA), estruturada nos três níveis de Endsley:
 
-Percepção: Coleta de dados (Saúde, Clima, Aeronave).
+Percepção: Coleta de dados de Saúde, Clima e Aeronave.
 
 Compreensão: Processamento do impacto desses fatores na operação.
 
 Projeção: Cálculo automatizado do nível de risco para a missão.
 
-##🛠️ Sumário Técnico
+🛠️ Sumário Técnico
 
 Stack Tecnológica
-Backend: Java 17, Spring Boot 3.4.2, Spring Data JPA, Hibernate.
+Backend: Java 17, Spring Boot 3.4.2, Spring Data JPA.
 
 Frontend: HTML5, Tailwind CSS, JavaScript (Async/Await), Chart.js.
 
-Banco de Dados: PostgreSQL (executando via Docker).
+Banco de Dados: PostgreSQL 15 (Docker).
 
-Documentação: Swagger/OpenAPI 3.
+CI/CD: GitHub Actions com execução automatizada de testes.
 
 Arquitetura
-O sistema utiliza uma arquitetura Monolítica Modular baseada em API RESTful. O fluxo de dados separa rigorosamente a lógica de cálculo de risco (Service Layer) da persistência de dados, garantindo que as regras de segurança operacional sejam validadas antes de qualquer registro no banco.
+O sistema utiliza uma arquitetura Monolítica Modular com API RESTful. A lógica de negócio é isolada na camada de serviço, garantindo que o cálculo de risco e as validações de SMS ocorram antes da persistência no banco.
 
 Escolhas de Design
-Fail-Safe Operacional: Bloqueio via GlobalExceptionHandler que interrompe missões de risco ALTO sem mitigação (400 Bad Request).
+Fail-Safe: Uso de GlobalExceptionHandler para bloquear registros de risco ALTO sem mitigação (Retorno 400 Bad Request).
 
-UX de Aviação: Gráficos radar para identificação imediata de degradação de pilares de segurança.
+Visualização Crítica: Gráfico radar para identificação imediata de pilares de risco degradados.
 
-Infraestrutura Imutável: Ambiente de dados replicável via Docker Compose.
+Infraestrutura como Código: Configuração de banco de dados e ambiente de CI via Docker e YAML.
 
-##🔧 Execução Local (Checklist de Partida)
+🔧 Execução Local (Checklist de Partida)
 
-Pré-requisitos
-Java 17 | Docker | Maven (opcional, use o ./mvnw incluso).
-
-Passo a Passo
-Clone e Acesse:
+Clonar Projeto:
 
 Bash
 git clone https://github.com/guerramath/safety-api.git
 cd safety-api
-Subir Banco de Dados:
+Subir Infraestrutura:
 
 Bash
 docker-compose up -d
-Rodar API:
+Rodar Aplicação:
 
 Bash
 ./mvnw spring-boot:run
 Acessar:
 
-Interface: Abra index.html no navegador.
+Dashboard: Abrir src/main/resources/static/index.html.
 
-Swagger: http://localhost:8081/swagger-ui/index.html.
+Documentação: http://localhost:8081/swagger-ui/index.html.
 
-##📡 Testando a API
+📡 Exemplos de Teste (cURL)
+Simular Risco Baixo (Sucesso):
 
-Exemplo via cURL (Registro de Risco)
 Bash
 curl -X POST http://localhost:8081/api/v1/safety \
 -H "Content-Type: application/json" \
 -d '{
   "pilotName": "Matheus Guerra",
   "healthScore": 1,
-  "weatherScore": 2,
+  "weatherScore": 1,
   "aircraftScore": 1,
   "missionScore": 1,
-  "mitigationPlan": "Operação Nominal"
+  "mitigationPlan": "Voo Nominal"
 }'
-Postman Collection
-Importe o JSON abaixo no Postman para ter os endpoints prontos:
+Simular Risco Alto sem Mitigação (Bloqueio):
 
-<details> <summary>Clique para expandir o JSON</summary>
+Bash
+curl -X POST http://localhost:8081/api/v1/safety \
+-H "Content-Type: application/json" \
+-d '{
+  "pilotName": "Matheus Guerra",
+  "healthScore": 5,
+  "weatherScore": 5,
+  "aircraftScore": 5,
+  "missionScore": 5,
+  "mitigationPlan": ""
+}'
 
-JSON
-{
-	"info": {
-		"name": "Safety API SMS",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Registrar Avaliação",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"pilotName\": \"Matheus Guerra\",\n  \"healthScore\": 1,\n  \"weatherScore\": 1,\n  \"aircraftScore\": 1,\n  \"missionScore\": 1,\n  \"mitigationPlan\": \"Nenhum risco detectado\"\n}",
-					"options": { "raw": { "language": "json" } }
-				},
-				"url": { "raw": "http://localhost:8081/api/v1/safety" }
-			}
-		},
-		{
-			"name": "Listar Histórico",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": { "raw": "http://localhost:8081/api/v1/safety/history" }
-			}
-		}
-	]
-}
-</details>
+🗺️ Roadmap de Evolução
 
-##🗺️ Roadmap e Issues
+[ ] Integração Meteorológica: Consumo automático de METAR/TAF via API da NOAA.
 
-Próximos Passos
-[ ] Integração com APIs Meteorológicas (NOAA/METAR).
+[ ] Segurança: Implementação de autenticação JWT para diferentes níveis de acesso (Piloto/Auditor).
 
-[ ] Autenticação via Spring Security + JWT.
+[ ] Relatórios: Exportação de histórico de segurança em formato PDF/CSV para auditorias de SMS.
 
-[ ] Dashboard Mobile com React Native (Offline-first).
+👨‍✈️ Sobre o Autor
 
-Como Contribuir
-Abra uma Issue relatando o bug ou sugestão.
+Matheus Guerra Mestre em Segurança e Aeronavegabilidade Continuada (ITA). Piloto e Instrutor de Aviação Civil. Atualmente focado em unir a experiência operacional aeronáutica com o desenvolvimento de software para criar sistemas de missão crítica mais seguros.
 
-Faça um Fork do projeto.
+⚖️ Licença
 
-Crie uma branch (git checkout -b feature/nova-melhoria).
-
-Envie um Pull Request.
-
-##👨‍✈️ Sobre o Autor
-
-Matheus Guerra – Mestre em Segurança e Aeronavegabilidade Continuada pelo ITA. Piloto e Instrutor de Aviação Civil, unindo bagagem técnica aeronáutica com engenharia de software.
+Distribuído sob a Licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/guerramatheus)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GuerraMath)
