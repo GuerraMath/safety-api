@@ -1,3 +1,43 @@
+### CENÁRIO 1: Voo Normal (Risco Baixo)
+# Deve retornar 200 OK e "riskLevel": "LOW"
+POST http://localhost:8081/api/v1/safety
+Content-Type: application/json
+
+{
+  "healthScore": 1,
+  "weatherScore": 1,
+  "aircraftScore": 1,
+  "missionScore": 1,
+  "mitigationPlan": ""
+}
+
+### CENÁRIO 2: Kill Item (Aeronave Inavegável)
+# Deve retornar 500 ou 400 com erro (Depende se implementamos o bloqueio total para NO_GO)
+# Se sua lógica for apenas classificar, deve retornar "riskLevel": "NO_GO"
+POST http://localhost:8081/api/v1/safety
+Content-Type: application/json
+
+{
+  "healthScore": 1,
+  "weatherScore": 1,
+  "aircraftScore": 60,
+  "missionScore": 1,
+  "mitigationPlan": "Tentar a sorte"
+}
+
+### CENÁRIO 3: Risco Alto SEM Mitigação (O Teste do ExceptionHandler)
+# Deve retornar 400 Bad Request e a mensagem JSON personalizada que criamos
+POST http://localhost:8081/api/v1/safety
+Content-Type: application/json
+
+{
+  "healthScore": 5,
+  "weatherScore": 5,
+  "aircraftScore": 5,
+  "missionScore": 10,
+  "mitigationPlan": ""
+}
+
 ### 1. Criar um Voo com o Nome do Piloto
 POST http://localhost:8081/api/v1/safety
 Content-Type: application/json

@@ -1,10 +1,10 @@
 package io.github.guerramath.safety_api.service;
 
 import io.github.guerramath.safety_api.dto.SafetyAssessmentDTO;
-import io.github.guerramath.safety_api.model.RiskLevel; // Import novo
-import io.github.guerramath.safety_api.model.SafetyAssessment;
-import io.github.guerramath.safety_api.repository.SafetyAssessmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.guerramath.safety_api.model.RiskLevel;
+import io.github.guerramath.safety_api.model.SafetyEvaluation;
+import io.github.guerramath.safety_api.repository.SafetyRepository;
+import io.github.guerramath.safety_api.exception.SafetyValidationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,58 +13,67 @@ import java.util.List;
 @Service
 public class SafetyService {
 
-    @Autowired
-    private SafetyAssessmentRepository repository;
+    private final SafetyRepository repository;
 
-    private static final int THRESHOLD_LOW = 20;   // Ajuste conforme sua matriz real
+    private static final int THRESHOLD_LOW = 20;
     private static final int THRESHOLD_MEDIUM = 40;
 
-    public SafetyAssessment salvarAvaliacao(SafetyAssessmentDTO dto) {
-        SafetyAssessment assessment = new SafetyAssessment();
-        assessment.setPilotName(dto.getPilotName());
-        assessment.setHealthScore(dto.getHealthScore());
-        assessment.setWeatherScore(dto.getWeatherScore());
-        assessment.setAircraftScore(dto.getAircraftScore());
-        assessment.setMissionScore(dto.getMissionScore());
+    public SafetyService(SafetyRepository repository) {
+        this.repository = repository;
+    }
 
-        // --- LÓGICA DE INTELIGÊNCIA DE SEGURANÇA ---
+    /**
+     * Versão principal para salvar via API (Dashboard)
+     */
+    public SafetyEvaluation saveEvaluation(SafetyAssessmentDTO dto) {
+        SafetyEvaluation evaluation = new SafetyEvaluation();
+        evaluation.setPilotName(dto.getPilotName());
+        evaluation.setHealthScore(dto.getHealthScore());
+        evaluation.setWeatherScore(dto.getWeatherScore());
+        evaluation.setAircraftScore(dto.getAircraftScore());
+        evaluation.setMissionScore(dto.getMissionScore());
+        evaluation.setMitigationPlan(dto.getMitigationPlan());
 
+        return processRiskAndSave(evaluation);
+    }
+
+    /**
+     * Versão para os testes unitários (recebe a entidade diretamente)
+     */
+    public SafetyEvaluation saveEvaluation(SafetyEvaluation evaluation) {
+        return processRiskAndSave(evaluation);
+    }
+
+    private SafetyEvaluation processRiskAndSave(SafetyEvaluation evaluation) {
         RiskLevel nivelCalculado;
 
-        // 1. Verificação de KILL ITEMS (Regras Impeditivas)
-        // Exemplo: Se AircraftScore for muito alto (ex: pneu careca + sem freio), é NO_GO direto.
-        if (dto.getAircraftScore() >= 50) {
+        // 1. Verificação de KILL ITEMS (Aeronave >= 50 = NO_GO)
+        if (evaluation.getAircraftScore() >= 50) {
             nivelCalculado = RiskLevel.NO_GO;
-        }
-        else {
-            // 2. Cálculo Padrão (Soma)
-            int soma = assessment.getHealthScore() + assessment.getWeatherScore() +
-                    assessment.getAircraftScore() + assessment.getMissionScore();
+        } else {
+            // 2. Cálculo Padrão (Soma dos fatores)
+            int soma = evaluation.getHealthScore() + evaluation.getWeatherScore() +
+                    evaluation.getAircraftScore() + evaluation.getMissionScore();
 
             if (soma <= THRESHOLD_LOW) nivelCalculado = RiskLevel.LOW;
             else if (soma <= THRESHOLD_MEDIUM) nivelCalculado = RiskLevel.MEDIUM;
             else nivelCalculado = RiskLevel.HIGH;
         }
 
-        // 3. Validação de Mitigação (Compliance)
+        // 3. Validação de Compliance SMS
         if (nivelCalculado == RiskLevel.HIGH || nivelCalculado == RiskLevel.NO_GO) {
-            // Se o risco é alto e o piloto não escreveu nada no plano de mitigação...
-            if (dto.getMitigationPlan() == null || dto.getMitigationPlan().trim().isEmpty()) {
-                // Por enquanto lançamos uma RuntimeException simples para travar o processo
-                throw new RuntimeException("ALERTA DE SEGURANÇA: Operações de alto risco exigem um Plano de Mitigação preenchido.");
+            if (evaluation.getMitigationPlan() == null || evaluation.getMitigationPlan().trim().isEmpty()) {
+                throw new SafetyValidationException("ALERTA DE SEGURANÇA: Operações de alto risco exigem Plano de Mitigação.");
             }
         }
 
-        assessment.setRiskLevel(nivelCalculado);
-        assessment.setDateTime(LocalDateTime.now());
+        evaluation.setRiskLevel(nivelCalculado);
+        evaluation.setDateTime(LocalDateTime.now());
 
-        return repository.save(assessment);
+        return repository.save(evaluation);
     }
 
-    public List<SafetyAssessment> buscarTodos() {
+    public List<SafetyEvaluation> getHistory() {
         return repository.findAll();
-    }
-    public List<SafetyAssessment> getHistory() {
-        return repository.findAll(); // Retorna todos os registros para a auditoria
     }
 }
