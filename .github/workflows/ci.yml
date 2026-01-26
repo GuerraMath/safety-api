@@ -15,8 +15,8 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: safety_db
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
+          POSTGRES_USER: piloto
+          POSTGRES_PASSWORD: seguranca
         ports:
           - 5433:5432
         options: >-
@@ -35,9 +35,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Build and Test with Maven
         env:
+          # Sincronizado com o seu application.properties e o service acima
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/safety_db
-          SPRING_DATASOURCE_USERNAME: user
-          SPRING_DATASOURCE_PASSWORD: password
+          SPRING_DATASOURCE_USERNAME: piloto
+          SPRING_DATASOURCE_PASSWORD: seguranca
+        run: mvn -B package --file pom.xml
