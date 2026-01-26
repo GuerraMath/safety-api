@@ -1,4 +1,4 @@
-name: Java CI with Maven and PostgreSQL
+name: Java CI with Maven, Coverage and Linter
 
 on:
   push:
@@ -35,10 +35,33 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and Test with Maven
+      # 1. Step de Linter (Checkstyle)
+      # Roda antes do build pesado para falhar rápido se o código estiver "feio"
+      - name: Run Java Linter (Checkstyle)
+        run: mvn checkstyle:check
+
+      # 2. Build e Teste Completo (Verify)
+      # 'verify' roda testes unitários, integração e gera o relatório do JaCoCo
+      - name: Build with Maven (Verify & JaCoCo)
         env:
-          # Sincronizado com o seu application.properties e o service acima
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/safety_db
           SPRING_DATASOURCE_USERNAME: piloto
           SPRING_DATASOURCE_PASSWORD: seguranca
-        run: mvn -B package --file pom.xml
+        run: mvn -B verify
+
+      # 3. Publicar Resultados dos Testes (JUnit XML)
+      # Útil para ver quais testes falharam na interface do GitHub
+      - name: Upload JUnit Test Results
+        if: always() # Executa mesmo se os testes falharem
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-results
+          path: '**/target/surefire-reports/*.xml'
+
+      # 4. Enviar Cobertura para o Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # Recomendado adicionar no Settings > Secrets do repo
+          files: ./target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
