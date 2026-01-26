@@ -131,20 +131,27 @@ function updateRadar() {
 
 A aplicação foi totalmente "Dockerizada" para facilitar o deploy.
 
-Pré-requisitos
+- Pré-requisitos
+
 Docker & Docker Compose instalados.
 
-Passo a Passo
+- Passo a Passo
+
 Clone o repositório:
 
-Bash
-git clone [https://github.com/GuerraMath/safety-api.git](https://github.com/GuerraMath/safety-api.git)
-cd safety-api
-Suba o ambiente (Database + API):
+´´´Bash
 
-Bash
+git clone [https://github.com/GuerraMath/safety-api.git](https://github.com/GuerraMath/safety-api.git)
+
+cd safety-api
+
+Suba o ambiente (Database + API):´´´
+
+´´´Bash
+
 docker-compose up -d
-Acesse o Dashboard: Abra seu navegador em: http://localhost:8081
+
+Acesse o Dashboard: Abra seu navegador em: http://localhost:8081´´´
 
 👤 Autor
 
