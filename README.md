@@ -67,7 +67,7 @@ private SafetyEvaluation processRiskAndSave(SafetyEvaluation evaluation) {
 
     evaluation.setRiskLevel(nivelCalculado);
     return repository.save(evaluation);
-}
+    }
 
 ### 2. Testes Unitários e Confiabilidade
 Para garantir que a "Trava de Segurança" nunca falhe em produção, utilizamos testes automatizados com JUnit 5 e Mockito. O pipeline de CI/CD falha se este teste não passar.
@@ -92,7 +92,7 @@ void deveBloquearRiscoAltoSemMitigacao() {
     });
 
     verify(safetyRepository, never()).save(any());
-}
+    }
 
 ### 3. Inteligência Visual (Frontend)
 
@@ -120,7 +120,7 @@ function updateRadar() {
     saRadarChart.data.datasets[0].borderColor = color;
     saRadarChart.data.datasets[0].backgroundColor = color + '33'; // Transparência
     saRadarChart.update();
-}
+    }
 
 📦 Como Rodar a Aplicação
 
@@ -142,13 +142,9 @@ docker-compose up -d
 Acesse o Dashboard: Abra seu navegador em: http://localhost:8081
 
 👤 Autor
-
 Matheus Guerra
-
 Mestre em Segurança de Aviação e Aeronavegabilidade Continuada (ITA - Instituto Tecnológico de Aeronáutica).
-
 Piloto e Instrutor de Aviação Civil.
-
 Desenvolvedor de Software com foco em Sistemas Críticos (Java/Spring).
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/guerramatheus)
