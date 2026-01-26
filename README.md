@@ -6,6 +6,7 @@ Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker)
 ![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
 ![CI](https://github.com/GuerraMath/safety-api/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://codecov.io/gh/GuerraMath/safety-api/branch/main/graph/badge.svg)
 
 ## Interface do Sistema
 ![Preview do Dashboard](./assets/dashboard-preview.png)
