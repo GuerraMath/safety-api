@@ -23,7 +23,7 @@ Risk assessment and team readiness dashboard. Responsive checklist-style interfa
 
 ##🎯 Quick Start
 
-Test it NOW without installing anything:
+**Test it NOW without installing anything:**
 
 1. Access: [Live Demo](https://safety-api-production.up.railway.app/)
 
@@ -37,17 +37,17 @@ Test it NOW without installing anything:
 
 ##📌 About the Project
 
-The SMS (Safety Management System) Tool is a software solution developed to enhance the Situational Awareness (SA) of pilots and aviation managers before mission execution.
+The **SMS (Safety Management System) Tool** is a software solution developed to enhance the **Situational Awareness (SA)** of pilots and aviation managers before mission execution.
 
-Unlike passive log systems, this application acts as an active safety barrier. Utilizing a Quantitative Risk Matrix, the system evaluates 20 critical points distributed across 4 fundamental pillars:
+Unlike passive log systems, this application acts as an active safety barrier. Utilizing a **Quantitative Risk Matrix**, the system evaluates 20 critical points distributed across 4 fundamental pillars:
 
-Human Factors (Health)
+**Human Factors (Health)**
 
-Environment (Weather)
+**Environment (Weather)**
 
-Machine (Aircraft)
+**Machine (Aircraft)**
 
-Operation (Mission)
+**Operation (Mission)**
 
 The goal is to prevent, via software, high-risk operations from being initiated without a formalized Mitigation Plan, ensuring compliance with international flight safety standards.
 
@@ -55,15 +55,15 @@ The goal is to prevent, via software, high-risk operations from being initiated 
 
 ##🚀 Technologies Used
 
-Backend: Java 17, Spring Boot 3, Spring Data JPA, Hibernate, Maven.
+**Backend:** Java 17, Spring Boot 3, Spring Data JPA, Hibernate, Maven.
 
-Database: PostgreSQL 15 (Containerized).
+**Database:** PostgreSQL 15 (Containerized).
 
-Frontend: HTML5, Tailwind CSS, JavaScript (ES6+), Chart.js (Radar & Doughnut Charts).
+**Frontend:** HTML5, Tailwind CSS, JavaScript (ES6+), Chart.js (Radar & Doughnut Charts).
 
-DevOps: Docker, Docker Compose, GitHub Actions (CI/CD Pipeline).
+**DevOps:** Docker, Docker Compose, GitHub Actions (CI/CD Pipeline).
 
-Testing: JUnit 5, Mockito.
+**Testing:** JUnit 5, Mockito.
 
 ---
 
@@ -71,8 +71,8 @@ Testing: JUnit 5, Mockito.
 
 Below are selected snippets demonstrating the implementation of critical business rules and software quality assurance.
 
-1. Risk Evaluation Logic (Backend)
-The processRiskAndSave method in SafetyService acts as the "Gatekeeper". It calculates the sum of risk factors and enforces the business rule: High Risks (HIGH/NO_GO) require a mandatory mitigation plan.
+### 1. Risk Evaluation Logic (Backend)
+The `processRiskAndSave` method in `SafetyService` acts as the "Gatekeeper". It calculates the sum of risk factors and enforces the business rule: **High Risks (HIGH/NO_GO) require a mandatory mitigation plan.**
 
 Java
 // src/main/java/.../service/SafetyService.java
@@ -106,7 +106,7 @@ private SafetyEvaluation processRiskAndSave(SafetyEvaluation evaluation) {
     return repository.save(evaluation);
     }
 
-2. Unit Testing and Reliability
+### 2. Unit Testing and Reliability
 To ensure the "Safety Lock" never fails in production, we use automated tests with JUnit 5 and Mockito. The CI/CD pipeline fails if this test does not pass.
 
 Java
@@ -131,7 +131,7 @@ void shouldBlockHighRiskWithoutMitigation() {
     verify(safetyRepository, never()).save(any());
     }
 
-3. Visual Intelligence (Frontend)
+### 3. Visual Intelligence (Frontend)
 On the frontend, we use Chart.js to plot Situational Awareness in real-time. The logic below dynamically changes the radar color (Green/Yellow/Red) as the team's average readiness drops.
 
 JavaScript
@@ -183,7 +183,7 @@ Access the Dashboard: Open your browser at: http://localhost:8081
 
 ##👤 Author
 
-Matheus Guerra
+// Matheus Guerra
 
 Master in Aviation Safety and Continued Airworthiness (ITA - Technological Institute of Aeronautics).
 
