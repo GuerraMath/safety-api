@@ -1,3 +1,5 @@
+Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
+
 ![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-green?style=for-the-badge&logo=spring)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql)
@@ -6,10 +8,9 @@
 ![CI](https://github.com/GuerraMath/safety-api/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://codecov.io/gh/GuerraMath/safety-api/branch/main/graph/badge.svg)
 [![Railway](https://img.shields.io/badge/Deploy-Railway-blueviolet?logo=railway)](https://safety-api-production.up.railway.app/)
+[![Português](https://img.shields.io/badge/Language-Português-green)](READMEpt-br.md)
 
-Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
-
-🌐 Live Demo: [https://safety-api-production.up.railway.app](https://safety-api-production.up.railway.app)
+🌐 **Live Demo**: [https://safety-api-production.up.railway.app](https://safety-api-production.up.railway.app)
 
 Full-Stack Operational Risk Management System based on Endsley's Situational Awareness framework.
 
@@ -20,19 +21,21 @@ Full-Stack Operational Risk Management System based on Endsley's Situational Awa
 
 Risk assessment and team readiness dashboard. Responsive checklist-style interface with traceability and print functionality, integrated via API.
 
-🎯 Quick Start
+##🎯 Quick Start
 
 Test it NOW without installing anything:
 
-Access: [Live Demo](https://safety-api-production.up.railway.app/)
+1. Access: [Live Demo](https://safety-api-production.up.railway.app/)
 
-Test the API: [Swagger Docs](https://safety-api-production.up.railway.app/swagger-ui/index.html)
+2. Test the API: [Swagger Docs](https://safety-api-production.up.railway.app/swagger-ui/index.html)
 
-Fill out the pre-flight risk form
+3. Fill out the pre-flight risk form
 
-Watch the radar update in real-time
+4. Watch the radar update in real-time
 
-📌 About the Project
+---
+
+##📌 About the Project
 
 The SMS (Safety Management System) Tool is a software solution developed to enhance the Situational Awareness (SA) of pilots and aviation managers before mission execution.
 
@@ -48,7 +51,9 @@ Operation (Mission)
 
 The goal is to prevent, via software, high-risk operations from being initiated without a formalized Mitigation Plan, ensuring compliance with international flight safety standards.
 
-🚀 Technologies Used
+---
+
+##🚀 Technologies Used
 
 Backend: Java 17, Spring Boot 3, Spring Data JPA, Hibernate, Maven.
 
@@ -60,7 +65,9 @@ DevOps: Docker, Docker Compose, GitHub Actions (CI/CD Pipeline).
 
 Testing: JUnit 5, Mockito.
 
-💻 Code Examples (Technical Highlights)
+---
+
+##💻 Code Examples (Technical Highlights)
 
 Below are selected snippets demonstrating the implementation of critical business rules and software quality assurance.
 
@@ -151,7 +158,9 @@ function updateRadar() {
     saRadarChart.update();
     }
 
-📦 How to Run the Application
+---
+
+##📦 How to Run the Application
 
 The application is fully "Dockerized" to facilitate deployment.
 
@@ -170,8 +179,9 @@ Start the environment (Database + API):
 docker-compose up -d
 Access the Dashboard: Open your browser at: http://localhost:8081
 ```
+---
 
-👤 Author
+##👤 Author
 
 Matheus Guerra
 
