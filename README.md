@@ -17,9 +17,7 @@ Full-Stack Operational Risk Management System based on Endsley's Situational Awa
 ## System Interface
 
 ![Preview do Dashboard](./assets/dashboard-preview.png)
-- Dashboard de avaliação de riscos e prontidão da equipe. Interface responsiva tipo check-list com rastreabilidade e função de impressão, integrada via API.
-
-Risk assessment and team readiness dashboard. Responsive checklist-style interface with traceability and print functionality, integrated via API.
+- Risk assessment and team readiness dashboard. Responsive checklist-style interface with traceability and print functionality, integrated via API.
 
 ##🎯 Quick Start
 
