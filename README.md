@@ -8,6 +8,10 @@ Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 ![CI](https://github.com/GuerraMath/safety-api/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://codecov.io/gh/GuerraMath/safety-api/branch/main/graph/badge.svg)
 
+🌐 **Demo ao Vivo**: [https://safety-api-production.up.railway.app](https://safety-api-production.up.railway.app)
+
+Sistema Full Stack de Gerenciamento de Risco Operacional baseado no framework de Consciência Situacional de Endsley.
+
 ## Interface do Sistema
 ![Preview do Dashboard](./assets/dashboard-preview.png)
 - Dashboard de avaliação de riscos e prontidão da equipe. Interface responsiva tipo check-list com rastreabilidade e função de impressão, integrada via API.
