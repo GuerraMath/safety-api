@@ -7,6 +7,7 @@ Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 ![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
 ![CI](https://github.com/GuerraMath/safety-api/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://codecov.io/gh/GuerraMath/safety-api/branch/main/graph/badge.svg)
+[![Railway](https://img.shields.io/badge/Deploy-Railway-blueviolet?logo=railway)](https://safety-api-production.up.railway.app/)
 
 🌐 **Demo ao Vivo**: [https://safety-api-production.up.railway.app](https://safety-api-production.up.railway.app)
 
@@ -15,6 +16,16 @@ Sistema Full Stack de Gerenciamento de Risco Operacional baseado no framework de
 ## Interface do Sistema
 ![Preview do Dashboard](./assets/dashboard-preview.png)
 - Dashboard de avaliação de riscos e prontidão da equipe. Interface responsiva tipo check-list com rastreabilidade e função de impressão, integrada via API.
+
+## 🎯 Quick Start
+
+**Teste AGORA sem instalar nada:**
+1. Acesse: [Demo ao Vivo](https://safety-api-production.up.railway.app/)
+2. Teste a API: [Swagger Docs](https://safety-api-production.up.railway.app/swagger-ui/index.html)
+3. Preencha o formulário de risco pré-voo
+4. Veja o radar atualizar em tempo real
+
+---
 
 ## 📌 Sobre o Projeto
 
