@@ -1,19 +1,32 @@
+![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-green?style=for-the-badge&logo=spring)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker)
+![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
+![CI](https://github.com/GuerraMath/safety-api/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://codecov.io/gh/GuerraMath/safety-api/branch/main/graph/badge.svg)
+[![Railway](https://img.shields.io/badge/Deploy-Railway-blueviolet?logo=railway)](https://safety-api-production.up.railway.app/)
+
 Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 
-🌐 Live Demo: https://safety-api-production.up.railway.app
+🌐 Live Demo: [https://safety-api-production.up.railway.app](https://safety-api-production.up.railway.app)
 
 Full-Stack Operational Risk Management System based on Endsley's Situational Awareness framework.
 
-System Interface
+## System Interface
+
+![Preview do Dashboard](./assets/dashboard-preview.png)
+- Dashboard de avaliação de riscos e prontidão da equipe. Interface responsiva tipo check-list com rastreabilidade e função de impressão, integrada via API.
+
 Risk assessment and team readiness dashboard. Responsive checklist-style interface with traceability and print functionality, integrated via API.
 
 🎯 Quick Start
 
 Test it NOW without installing anything:
 
-Access: Live Demo
+Access: [Live Demo](https://safety-api-production.up.railway.app/)
 
-Test the API: Swagger Docs
+Test the API: [Swagger Docs](https://safety-api-production.up.railway.app/swagger-ui/index.html)
 
 Fill out the pre-flight risk form
 
