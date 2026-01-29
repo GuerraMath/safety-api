@@ -14,10 +14,15 @@ Safety Management System (SMS) - Situational Awareness Tool 🛫🛡️
 
 Full-Stack Operational Risk Management System based on Endsley's Situational Awareness framework.
 
-## System Interface
+## Desktop System Interface
 
 ![Preview do Dashboard](./assets/dashboard-preview.png)
 - Risk assessment and team readiness dashboard. Responsive checklist-style interface with traceability and print functionality, integrated via API.
+
+## 📱 Mobile Demo
+
+![App Demo](./media/SafetyAppdemo.gif)
+![Image](https://github.com/user-attachments/assets/650cc135-9aa6-4a17-8eca-b0f1ea4045b1)
 
 ##🎯 Quick Start
 
