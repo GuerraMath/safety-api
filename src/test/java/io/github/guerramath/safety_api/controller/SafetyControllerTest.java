@@ -2,7 +2,11 @@ package io.github.guerramath.safety_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.guerramath.safety_api.model.SafetyEvaluation;
+import io.github.guerramath.safety_api.model.User;
+import io.github.guerramath.safety_api.repository.UserRepository;
 import io.github.guerramath.safety_api.service.SafetyService;
+import io.github.guerramath.safety_api.util.JwtTestUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "spring.datasource.username=sa",
     "spring.datasource.password=",
     "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect"
+    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
+    "jwt.secret=test-secret-key-for-testing-purposes-only-256-bits"
 })
 class SafetyControllerTest {
 
@@ -33,6 +38,22 @@ class SafetyControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private String authToken;
+
+    @BeforeEach
+    void setUp() {
+        // Criar e salvar usuario de teste
+        User testUser = JwtTestUtils.createTestPilot();
+        testUser.setId(null); // Deixar JPA gerar o ID
+        User savedUser = userRepository.save(testUser);
+
+        // Gerar token JWT para o usuario
+        authToken = JwtTestUtils.generateBearerToken(savedUser);
+    }
 
     @Test
     @DisplayName("Deve criar um novo checklist via POST e retornar 200")
@@ -48,6 +69,7 @@ class SafetyControllerTest {
             """;
 
         mockMvc.perform(post("/api/v1/safety")
+                        .header("Authorization", authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk());
@@ -58,6 +80,7 @@ class SafetyControllerTest {
     void testInvalidRequest() throws Exception {
         // Testando um JSON vazio para disparar validações de @NotNull ou @NotBlank
         mockMvc.perform(post("/api/v1/safety")
+                        .header("Authorization", authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
