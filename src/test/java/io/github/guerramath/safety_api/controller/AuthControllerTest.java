@@ -11,6 +11,7 @@ import io.github.guerramath.safety_api.model.User;
 import io.github.guerramath.safety_api.service.AuthService;
 import io.github.guerramath.safety_api.service.JwtService;
 import io.github.guerramath.safety_api.util.JwtTestUtils;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 @DisplayName("AuthController Tests")
 public class AuthControllerTest {
 

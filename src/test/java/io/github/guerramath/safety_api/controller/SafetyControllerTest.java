@@ -6,6 +6,7 @@ import io.github.guerramath.safety_api.model.User;
 import io.github.guerramath.safety_api.repository.UserRepository;
 import io.github.guerramath.safety_api.service.SafetyService;
 import io.github.guerramath.safety_api.util.JwtTestUtils;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 public class SafetyControllerTest {
 
     @Autowired
