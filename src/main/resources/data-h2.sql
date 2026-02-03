@@ -1,12 +1,10 @@
--- Usuarios de teste (senha: password123)
+-- Usuarios de teste para H2 (senha: password123)
 -- BCrypt hash: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36E0MYzT
 INSERT INTO users (name, email, password_hash, role, auth_provider, email_verified, created_at, updated_at)
-VALUES ('Test User', 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36E0MYzT', 'PILOT', 'LOCAL', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-ON CONFLICT (email) DO NOTHING;
+VALUES ('Test User', 'test@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36E0MYzT', 'PILOT', 'LOCAL', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO users (name, email, password_hash, role, auth_provider, email_verified, created_at, updated_at)
-VALUES ('Admin User', 'admin@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36E0MYzT', 'ADMIN', 'LOCAL', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-ON CONFLICT (email) DO NOTHING;
+VALUES ('Admin User', 'admin@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36E0MYzT', 'ADMIN', 'LOCAL', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Cenário 1: Voo de Instrução Matinal (Risco Baixo)
 INSERT INTO safety_evaluations (pilot_name, health_score, weather_score, aircraft_score, mission_score, mitigation_plan, risk_level, created_at)
