@@ -8,6 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,6 +24,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+    // Cache simples para evitar queries repetidas ao banco
+    private final ConcurrentHashMap<Long, CachedUser> userCache = new ConcurrentHashMap<>();
+    private static final long CACHE_TTL_MS = TimeUnit.MINUTES.toMillis(5);
+
+    private static class CachedUser {
+        final User user;
+        final long timestamp;
+
+        CachedUser(User user) {
+            this.user = user;
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        boolean isExpired() {
+            return System.currentTimeMillis() - timestamp > CACHE_TTL_MS;
+        }
+    }
+
     public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
@@ -33,13 +53,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        String jwt = extractJwtFromRequest(request);
+
+        // Retorna cedo se não há token - evita processamento desnecessário
+        if (!StringUtils.hasText(jwt)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
-            String jwt = extractJwtFromRequest(request);
-
-            if (StringUtils.hasText(jwt) && jwtService.isTokenValid(jwt)) {
+            if (jwtService.isTokenValid(jwt)) {
                 String userId = jwtService.extractUserId(jwt);
+                Long userIdLong = Long.parseLong(userId);
 
-                User user = userRepository.findById(Long.parseLong(userId)).orElse(null);
+                User user = getUserFromCacheOrDb(userIdLong);
 
                 if (user != null) {
                     UsernamePasswordAuthenticationToken authentication =
@@ -53,11 +80,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
+        } catch (NumberFormatException e) {
+            logger.debug("ID de usuario invalido no token JWT");
         } catch (Exception e) {
-            logger.debug("Falha ao processar JWT token: " + e.getMessage());
+            logger.error("Falha ao processar JWT token: " + e.getMessage(), e);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private User getUserFromCacheOrDb(Long userId) {
+        CachedUser cached = userCache.get(userId);
+
+        if (cached != null && !cached.isExpired()) {
+            return cached.user;
+        }
+
+        // Remove entrada expirada se existir
+        if (cached != null) {
+            userCache.remove(userId);
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            userCache.put(userId, new CachedUser(user));
+        }
+
+        return user;
     }
 
     private String extractJwtFromRequest(HttpServletRequest request) {
