@@ -9,6 +9,7 @@ import io.github.guerramath.safety_api.dto.auth.UserDto;
 import io.github.guerramath.safety_api.exception.AuthException;
 import io.github.guerramath.safety_api.model.User;
 import io.github.guerramath.safety_api.service.AuthService;
+import io.github.guerramath.safety_api.service.JwtService;
 import io.github.guerramath.safety_api.util.JwtTestUtils;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
