@@ -77,7 +77,7 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("access_token", response.getAccessToken());
+        assertEquals("access_token", response.getToken());
         assertEquals("refresh_token", response.getRefreshToken());
         assertNotNull(response.getUser());
         assertEquals("test@example.com", response.getUser().getEmail());
@@ -166,7 +166,7 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("access_token", response.getAccessToken());
+        assertEquals("access_token", response.getToken());
         assertEquals("refresh_token", response.getRefreshToken());
         assertEquals("newuser@example.com", response.getUser().getEmail());
 
@@ -215,7 +215,7 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("new_access_token", response.getAccessToken());
+        assertEquals("new_access_token", response.getToken());
     }
 
     @Test
