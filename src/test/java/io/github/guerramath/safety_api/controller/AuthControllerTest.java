@@ -163,7 +163,7 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value("new_access_token"));
+                .andExpect(jsonPath("$.token").value("new_access_token"));
     }
 
     @Test

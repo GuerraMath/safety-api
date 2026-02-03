@@ -9,15 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+// IMPORTS DO SPRING REMOVIDOS AQUI (Não precisamos deles)
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class) // Apenas Mockito, sem peso do Spring
 public class SafetyServiceTest {
 
     @Mock
@@ -29,7 +26,7 @@ public class SafetyServiceTest {
     @Test
     @DisplayName("Deve lancar excecao quando o risco for ALTO e nao houver plano de mitigacao")
     void deveBloquearRiscoAltoSemMitigacao() {
-        // Cenario: Scores somando 60 (60 > 40 = HIGH) e plano vazio
+        // Cenario
         SafetyEvaluation evaluation = new SafetyEvaluation();
         evaluation.setPilotName("Matheus Guerra");
         evaluation.setHealthScore(15);
@@ -49,7 +46,7 @@ public class SafetyServiceTest {
     @Test
     @DisplayName("Deve salvar com sucesso quando o risco for ALTO mas houver plano de mitigacao")
     void deveSalvarRiscoAltoComMitigacao() {
-        // Cenario: Risco Alto (Soma 60) com plano preenchido
+        // Cenario
         SafetyEvaluation evaluation = new SafetyEvaluation();
         evaluation.setPilotName("Matheus Guerra");
         evaluation.setHealthScore(15);
