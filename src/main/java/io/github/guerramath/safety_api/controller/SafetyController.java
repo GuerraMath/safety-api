@@ -3,6 +3,7 @@ package io.github.guerramath.safety_api.controller;
 import io.github.guerramath.safety_api.dto.SafetyAssessmentDTO;
 import io.github.guerramath.safety_api.model.SafetyEvaluation;
 import io.github.guerramath.safety_api.service.SafetyService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class SafetyController {
     }
 
     @PostMapping
-    public ResponseEntity<SafetyEvaluation> criarAvaliacao(@RequestBody SafetyAssessmentDTO dto) {
+    public ResponseEntity<SafetyEvaluation> criarAvaliacao(@Valid @RequestBody SafetyAssessmentDTO dto) {
         SafetyEvaluation novaAvaliacao = service.saveEvaluation(dto);
         return ResponseEntity.ok(novaAvaliacao);
     }
