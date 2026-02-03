@@ -1,8 +1,5 @@
 package io.github.guerramath.safety_api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.guerramath.safety_api.model.User;
-import io.github.guerramath.safety_api.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional // Limpa o banco após cada teste
+@Transactional
 public class SafetyControllerTest {
 
     @Autowired
@@ -28,8 +25,8 @@ public class SafetyControllerTest {
 
     @Test
     @DisplayName("Deve criar um novo checklist via POST e retornar 200")
-    // Simula um usuário autenticado com permissão. Pula a validação de token manual.
-    @WithMockUser(username = "piloto@teste.com", roles = "PILOT")
+    // MUDANÇA CRÍTICA: 'authorities' evita o prefixo ROLE_, garantindo match com 'PILOT'
+    @WithMockUser(username = "piloto@teste.com", authorities = {"PILOT"})
     void testCreateEvaluation() throws Exception {
         String requestBody = """
             {
@@ -49,11 +46,11 @@ public class SafetyControllerTest {
 
     @Test
     @DisplayName("Deve retornar 400 Bad Request se os dados forem inválidos")
-    @WithMockUser(username = "piloto@teste.com", roles = "PILOT")
+    @WithMockUser(username = "piloto@teste.com", authorities = {"PILOT"})
     void testInvalidRequest() throws Exception {
         mockMvc.perform(post("/api/v1/safety")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}")) // JSON Vazio
+                        .content("{}"))
                 .andExpect(status().isBadRequest());
     }
 }
