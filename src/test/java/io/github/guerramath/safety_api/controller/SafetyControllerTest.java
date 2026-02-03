@@ -3,6 +3,8 @@ package io.github.guerramath.safety_api.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2) // <--- A SOLUÇÃO
 public class SafetyControllerTest {
 
     @Autowired
@@ -25,7 +28,6 @@ public class SafetyControllerTest {
 
     @Test
     @DisplayName("Deve criar um novo checklist via POST e retornar 200")
-    // MUDANÇA CRÍTICA: 'authorities' evita o prefixo ROLE_, garantindo match com 'PILOT'
     @WithMockUser(username = "piloto@teste.com", authorities = {"PILOT"})
     void testCreateEvaluation() throws Exception {
         String requestBody = """
