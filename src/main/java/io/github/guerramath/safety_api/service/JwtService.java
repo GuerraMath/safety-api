@@ -2,112 +2,101 @@ package io.github.guerramath.safety_api.service;
 
 import io.github.guerramath.safety_api.model.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/**
- * Servico para geracao e validacao de tokens JWT.
- */
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret:minha-chave-secreta-super-segura-para-jwt-256-bits!}")
+    @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.access-token-expiration:86400000}")
-    private long accessTokenExpiration; // 24 horas em ms
+    @Value("${jwt.access-token-expiration}")
+    private long jwtExpiration;
 
-    @Value("${jwt.refresh-token-expiration:604800000}")
-    private long refreshTokenExpiration; // 7 dias em ms
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshExpiration;
 
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+    public String extractUsername(String token) {
+        if (token == null || token.trim().isEmpty()) return null;
+        return extractClaim(token, Claims::getSubject);
     }
 
-    /**
-     * Gera um access token para o usuario.
-     */
-    public String generateAccessToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", user.getEmail());
-        claims.put("role", user.getRole().name());
-        claims.put("type", "access");
-
-        return Jwts.builder()
-                .claims(claims)
-                .subject(user.getId().toString())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    /**
-     * Gera um refresh token para o usuario.
-     */
-    public String generateRefreshToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "refresh");
-
-        return Jwts.builder()
-                .claims(claims)
-                .subject(user.getId().toString())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    /**
-     * Extrai o ID do usuario do token.
-     */
-    public String extractUserId(String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    /**
-     * Verifica se o token eh valido.
-     */
     public boolean isTokenValid(String token) {
+        if (token == null || token.trim().isEmpty()) return false;
         try {
-            extractClaims(token);
-            return true;
-        } catch (ExpiredJwtException | MalformedJwtException
-                 | UnsupportedJwtException | SignatureException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Verifica se o token eh um refresh token.
-     */
-    public boolean isRefreshToken(String token) {
-        try {
-            Claims claims = extractClaims(token);
-            return "refresh".equals(claims.get("type"));
+            return !isTokenExpired(token);
         } catch (Exception e) {
             return false;
         }
     }
 
-    /**
-     * Extrai as claims do token.
-     */
-    private Claims extractClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
+    public boolean isTokenValid(String token, User user) {
+        if (token == null || token.trim().isEmpty()) return false;
+        final String username = extractUsername(token);
+        return (username.equals(user.getEmail())) && !isTokenExpired(token);
+    }
+
+    public String generateAccessToken(User user) {
+        return buildToken(new HashMap<>(), user, jwtExpiration);
+    }
+
+    public String generateRefreshToken(User user) {
+        return buildToken(new HashMap<>(), user, refreshExpiration);
+    }
+
+    public boolean isRefreshToken(String token) {
+        if (!isTokenValid(token)) return false;
+        return true;
+    }
+
+    public String extractUserId(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    private String buildToken(Map<String, Object> extraClaims, User user, long expiration) {
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(String.valueOf(user.getId()))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

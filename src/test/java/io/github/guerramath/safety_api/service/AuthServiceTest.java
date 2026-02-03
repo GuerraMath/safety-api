@@ -1,6 +1,6 @@
 package io.github.guerramath.safety_api.service;
 
-import com.google.gson.Strictness;
+import org.mockito.quality.Strictness;
 import io.github.guerramath.safety_api.dto.auth.AuthResponse;
 import io.github.guerramath.safety_api.dto.auth.LoginRequest;
 import io.github.guerramath.safety_api.dto.auth.RegisterRequest;
