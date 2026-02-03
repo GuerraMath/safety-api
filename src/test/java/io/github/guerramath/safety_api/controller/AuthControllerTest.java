@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,11 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(properties = {
-    "jwt.secret=test-secret-key-for-testing-purposes-only-256-bits"
-})
+@ActiveProfiles("test")
 @DisplayName("AuthController Tests")
-class AuthControllerTest {
+public class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -75,7 +74,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value("access_token"))
+                .andExpect(jsonPath("$.token").value("access_token"))
                 .andExpect(jsonPath("$.refreshToken").value("refresh_token"))
                 .andExpect(jsonPath("$.user.email").value("test@example.com"));
     }

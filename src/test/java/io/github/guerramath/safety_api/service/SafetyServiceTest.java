@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class SafetyServiceTest {
+public class SafetyServiceTest {
 
     @Mock
     private SafetyRepository safetyRepository;

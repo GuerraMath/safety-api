@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 		"spring.datasource.driver-class-name=org.h2.Driver"
 })
 @ActiveProfiles("test")
-class SafetyChecklistApiApplicationTests {
+public class SafetyChecklistApiApplicationTests {
 	@Test
 	void contextLoads() {
 		// Agora o Spring e o Hibernate sao forcados a usar o H2

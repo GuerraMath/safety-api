@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DisplayName("JwtService Tests")
 @ActiveProfiles("test")
-class JwtServiceTest {
+public class JwtServiceTest {
 
     @Autowired
     private JwtService jwtService;
