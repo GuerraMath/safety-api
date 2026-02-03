@@ -1,6 +1,5 @@
 package io.github.guerramath.safety_api.service;
 
-import org.mockito.quality.Strictness;
 import io.github.guerramath.safety_api.dto.auth.AuthResponse;
 import io.github.guerramath.safety_api.dto.auth.LoginRequest;
 import io.github.guerramath.safety_api.dto.auth.RegisterRequest;
@@ -16,22 +15,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthService Tests")
-@SpringBootTest
-@ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class AuthServiceTest {
 
@@ -158,12 +153,15 @@ public class AuthServiceTest {
                 .thenReturn(false);
         when(passwordEncoder.encode("password123"))
                 .thenReturn("encoded_password");
+
+        // CORREÇÃO: Ensinando o Mockito a retornar o usuário COM ID após o save
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> {
                     User user = invocation.getArgument(0);
-                    user.setId(2L);
+                    user.setId(2L); // Simula o banco gerando ID
                     return user;
                 });
+
         when(jwtService.generateAccessToken(any(User.class)))
                 .thenReturn("access_token");
         when(jwtService.generateRefreshToken(any(User.class)))
