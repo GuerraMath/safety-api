@@ -12,8 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @DisplayName("JwtService Tests")
-@ActiveProfiles("test") // Isso é tudo que você precisa!
 public class JwtServiceTest {
 
     @Autowired
