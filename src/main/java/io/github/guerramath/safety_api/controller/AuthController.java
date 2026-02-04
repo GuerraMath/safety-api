@@ -1,6 +1,7 @@
 package io.github.guerramath.safety_api.controller;
 
 import io.github.guerramath.safety_api.dto.auth.*;
+import io.github.guerramath.safety_api.exception.AuthException;
 import io.github.guerramath.safety_api.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class AuthController {
     public ResponseEntity<UserDto> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("Usuário não autenticado");
+            throw new AuthException("Usuario nao autenticado");
         }
 
         Object principal = auth.getPrincipal();
@@ -44,7 +45,7 @@ public class AuthController {
             return ResponseEntity.ok(UserDto.fromEntity(user));
         }
 
-        throw new RuntimeException("Usuário não autenticado");
+        throw new AuthException("Usuario nao autenticado");
     }
 
     @PostMapping("/logout")

@@ -1,6 +1,7 @@
 package io.github.guerramath.safety_api.service;
 
 import io.github.guerramath.safety_api.dto.auth.*;
+import io.github.guerramath.safety_api.exception.AuthException;
 import io.github.guerramath.safety_api.model.User;
 import io.github.guerramath.safety_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,10 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new AuthException("Email ou senha invalidos"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Senha incorreta");
+            throw new AuthException("Email ou senha invalidos");
         }
 
         return buildAuthResponse(user);
@@ -31,7 +32,7 @@ public class AuthService {
         try {
             var payload = googleTokenVerifier.verify(request.getIdToken());
             if (payload == null) {
-                throw new RuntimeException("Token do Google inválido");
+                throw new AuthException("Token do Google invalido");
             }
 
             User user = userRepository.findByEmail(payload.getEmail())
@@ -44,15 +45,17 @@ public class AuthService {
                             .build()));
 
             return buildAuthResponse(user);
+        } catch (AuthException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Erro na autenticação Google: " + e.getMessage());
+            throw new AuthException("Erro na autenticacao Google: " + e.getMessage());
         }
     }
 
     public AuthResponse register(RegisterRequest request) {
         User existingUser = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (existingUser != null) {
-            throw new RuntimeException("Email já cadastrado");
+            throw new AuthException("Email ja cadastrado");
         }
 
         User newUser = User.builder()
@@ -72,21 +75,23 @@ public class AuthService {
         try {
             String userId = jwtService.extractUserId(refreshTokenValue);
             if (!jwtService.isRefreshToken(refreshTokenValue)) {
-                throw new RuntimeException("Token inválido");
+                throw new AuthException("Token invalido");
             }
 
             User user = userRepository.findById(Long.parseLong(userId))
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                    .orElseThrow(() -> new AuthException("Usuario nao encontrado"));
 
             return buildAuthResponse(user);
+        } catch (AuthException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao atualizar token: " + e.getMessage());
+            throw new AuthException("Erro ao atualizar token: " + e.getMessage());
         }
     }
 
     public UserDto getCurrentUser(long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new AuthException("Usuario nao encontrado"));
         return UserDto.fromEntity(user);
     }
 
