@@ -13,14 +13,28 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String name;
+    
     @Column(unique = true)
     private String email;
+    
     private String password;
 
-    // CAMPOS QUE OS TESTES ESTÃO PEDINDO:
-    private String passwordHash; // Alguns testes usam setPasswordHash
-    private UserRole role;       // Requerido em AuthControllerTest e JwtServiceTest
-    private AuthProvider authProvider; // Requerido em AuthServiceTest
-    private boolean emailVerified;     // Requerido em JwtTestUtils
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
+    private boolean emailVerified;
+
+    // Métodos de conveniência para compatibilidade com testes antigos
+    public String getPasswordHash() {
+        return this.password;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.password = passwordHash;
+    }
 }
