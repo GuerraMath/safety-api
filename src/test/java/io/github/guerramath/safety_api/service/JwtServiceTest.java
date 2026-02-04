@@ -1,5 +1,6 @@
 package io.github.guerramath.safety_api.service;
 
+import io.github.guerramath.safety_api.model.AuthProvider;
 import io.github.guerramath.safety_api.model.User;
 import io.github.guerramath.safety_api.model.UserRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,9 @@ public class JwtServiceTest {
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
         testUser.setRole(UserRole.PILOT);
+        testUser.setAuthProvider(AuthProvider.LOCAL);
+        testUser.setEmailVerified(true);
+        testUser.setPasswordHash("hashed_password");
     }
 
     @Test

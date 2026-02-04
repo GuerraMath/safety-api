@@ -7,7 +7,9 @@ import io.github.guerramath.safety_api.dto.auth.RefreshTokenRequest;
 import io.github.guerramath.safety_api.dto.auth.RegisterRequest;
 import io.github.guerramath.safety_api.dto.auth.UserDto;
 import io.github.guerramath.safety_api.exception.AuthException;
+import io.github.guerramath.safety_api.model.AuthProvider;
 import io.github.guerramath.safety_api.model.User;
+import io.github.guerramath.safety_api.model.UserRole;
 import io.github.guerramath.safety_api.service.AuthService;
 import io.github.guerramath.safety_api.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +62,10 @@ public class AuthControllerTest {
         testUser.setId(1L);
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
-        testUser.setRole(io.github.guerramath.safety_api.model.UserRole.PILOT);
+        testUser.setRole(UserRole.PILOT);
+        testUser.setAuthProvider(AuthProvider.LOCAL);
+        testUser.setEmailVerified(true);
+        testUser.setPasswordHash("hashed_password");
     }
 
     @Test
@@ -118,7 +123,10 @@ public class AuthControllerTest {
         newUser.setId(2L);
         newUser.setName("New User");
         newUser.setEmail("newuser@example.com"); // Email bate com a requisição
-        newUser.setRole(io.github.guerramath.safety_api.model.UserRole.PILOT);
+        newUser.setRole(UserRole.PILOT);
+        newUser.setAuthProvider(AuthProvider.LOCAL);
+        newUser.setEmailVerified(true);
+        newUser.setPasswordHash("hashed_password");
 
         UserDto userDto = UserDto.fromEntity(newUser);
         AuthResponse authResponse = new AuthResponse("access_token", "refresh_token", userDto);

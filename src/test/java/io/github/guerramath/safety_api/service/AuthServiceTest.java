@@ -6,6 +6,7 @@ import io.github.guerramath.safety_api.dto.auth.RegisterRequest;
 import io.github.guerramath.safety_api.exception.AuthException;
 import io.github.guerramath.safety_api.model.AuthProvider;
 import io.github.guerramath.safety_api.model.User;
+import io.github.guerramath.safety_api.model.UserRole;
 import io.github.guerramath.safety_api.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +56,8 @@ public class AuthServiceTest {
         testUser.setEmail("test@example.com");
         testUser.setPasswordHash("hashed_password");
         testUser.setAuthProvider(AuthProvider.LOCAL);
-        testUser.setRole(io.github.guerramath.safety_api.model.UserRole.PILOT);
+        testUser.setRole(UserRole.PILOT);
+        testUser.setEmailVerified(true);
     }
 
     @Test
