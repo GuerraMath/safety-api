@@ -53,8 +53,7 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
-        User existingUser = userRepository.findByEmail(request.getEmail()).orElse(null);
-        if (existingUser != null) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AuthException("Email ja cadastrado");
         }
 
