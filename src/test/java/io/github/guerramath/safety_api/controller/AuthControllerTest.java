@@ -52,15 +52,20 @@ public class AuthControllerTest {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private io.github.guerramath.safety_api.repository.UserRepository userRepository;
+
     private User testUser;
 
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
         testUser = new User();
         testUser.setId(1L);
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
         testUser.setRole(io.github.guerramath.safety_api.model.UserRole.PILOT);
+        testUser = userRepository.save(testUser);
     }
 
     @Test
@@ -178,11 +183,10 @@ public class AuthControllerTest {
     @DisplayName("Deve obter dados do usuário autenticado")
     void testGetCurrentUser() throws Exception {
         // Arrange
-        // Gera um token válido usando a mesma chave secreta do JwtService real
         String token = jwtService.generateAccessToken(testUser);
         String bearerToken = "Bearer " + token;
 
-        when(authService.getCurrentUser(1L))
+        when(authService.getCurrentUser(testUser.getId()))
                 .thenReturn(UserDto.fromEntity(testUser));
 
         // Act & Assert
