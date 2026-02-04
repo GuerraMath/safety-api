@@ -32,6 +32,9 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal String userId) {
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(authService.getCurrentUser(Long.parseLong(userId)));
     }
 

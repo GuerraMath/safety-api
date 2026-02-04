@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            logger.debug("Falha ao processar JWT token: " + e.getMessage());
+            // Token inválido ou erro no processamento, não autentica o usuário
         }
 
         filterChain.doFilter(request, response);
