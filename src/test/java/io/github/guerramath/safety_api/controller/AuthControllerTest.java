@@ -186,7 +186,9 @@ public class AuthControllerTest {
         String token = jwtService.generateAccessToken(testUser);
         String bearerToken = "Bearer " + token;
 
-        when(authService.getCurrentUser(testUser.getId()))
+        // O principal no SecurityContext será String.valueOf(testUser.getId())
+        // O controlador chama authService.getCurrentUser(Long.parseLong(userIdStr))
+        when(authService.getCurrentUser(anyLong()))
                 .thenReturn(UserDto.fromEntity(testUser));
 
         // Act & Assert

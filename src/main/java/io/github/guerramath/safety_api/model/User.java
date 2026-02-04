@@ -25,9 +25,11 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
     private AuthProvider authProvider;
 
     private boolean emailVerified;
