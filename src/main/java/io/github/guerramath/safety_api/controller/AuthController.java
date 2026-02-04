@@ -31,11 +31,16 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal String userId) {
-        if (userId == null) {
+    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal Object principal) {
+        if (!(principal instanceof String)) {
             return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(authService.getCurrentUser(Long.parseLong(userId)));
+        String userIdStr = (String) principal;
+        try {
+            return ResponseEntity.ok(authService.getCurrentUser(Long.parseLong(userIdStr)));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(401).build();
+        }
     }
 
     @PostMapping("/google")
