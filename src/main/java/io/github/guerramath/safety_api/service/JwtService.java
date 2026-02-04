@@ -55,7 +55,9 @@ public class JwtService {
         claims.put("type", "refresh");
         return buildToken(claims, user, refreshExpiration);
     }
-
+    public String generateToken(User user) {
+        return generateAccessToken(user);
+    }
     public boolean isRefreshToken(String token) {
         if (!isTokenValid(token)) return false;
         String type = extractClaim(token, claims -> claims.get("type", String.class));
