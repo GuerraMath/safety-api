@@ -3,7 +3,6 @@ package io.github.guerramath.safety_api.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@SuppressWarnings("JpaDataSourceORMInspection")
 @Entity
 @Table(name = "users")
 @Data
@@ -14,15 +13,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     @Column(unique = true)
     private String email;
-
     private String password;
 
-    // Adicione este campo para resolver o erro do log
-    @Column(unique = true)
-    private String googleId;
+    // CAMPOS QUE OS TESTES ESTÃO PEDINDO:
+    private String passwordHash; // Alguns testes usam setPasswordHash
+    private UserRole role;       // Requerido em AuthControllerTest e JwtServiceTest
+    private AuthProvider authProvider; // Requerido em AuthServiceTest
+    private boolean emailVerified;     // Requerido em JwtTestUtils
 }

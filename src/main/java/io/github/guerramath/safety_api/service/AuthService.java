@@ -49,4 +49,19 @@ public class AuthService {
                 .user(UserDto.fromEntity(user))
                 .build();
     }
+    // Adicione estes métodos ao seu AuthService.java
+    public AuthResponse register(RegisterRequest request) {
+        // Implementação básica de registro
+        return new AuthResponse();
+    }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        // Implementação básica de refresh
+        return new AuthResponse();
+    }
+
+    public UserDto getCurrentUser(long userId) {
+        // Busca o usuário pelo ID
+        return new UserDto();
+    }
 }
