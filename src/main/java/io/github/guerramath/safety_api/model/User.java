@@ -20,7 +20,11 @@ public class User {
 
     // CAMPOS QUE OS TESTES ESTÃO PEDINDO:
     private String passwordHash; // Alguns testes usam setPasswordHash
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;       // Requerido em AuthControllerTest e JwtServiceTest
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AuthProvider authProvider; // Requerido em AuthServiceTest
     private boolean emailVerified;     // Requerido em JwtTestUtils
 }
