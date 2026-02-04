@@ -78,13 +78,22 @@ public class AuthService {
     public AuthResponse googleSignIn(GoogleSignInRequest request) {
         try {
             var payload = googleAuthService.verifyToken(request.getIdToken());
-            User user = userRepository.findByEmail(payload.getEmail())
-                    .orElseGet(() -> userRepository.save(User.builder()
-                            .email(payload.getEmail())
-                            .name((String) payload.get("name"))
-                            .authProvider(AuthProvider.GOOGLE)
-                            .role(UserRole.PILOT)
-                            .build()));
+            String googleId = payload.getSubject();
+            
+            User user = userRepository.findByGoogleId(googleId)
+                    .orElseGet(() -> userRepository.findByEmail(payload.getEmail())
+                            .map(existingUser -> {
+                                existingUser.setGoogleId(googleId);
+                                existingUser.setAuthProvider(AuthProvider.GOOGLE);
+                                return userRepository.save(existingUser);
+                            })
+                            .orElseGet(() -> userRepository.save(User.builder()
+                                    .email(payload.getEmail())
+                                    .googleId(googleId)
+                                    .name((String) payload.get("name"))
+                                    .authProvider(AuthProvider.GOOGLE)
+                                    .role(UserRole.PILOT)
+                                    .build())));
 
             return buildAuthResponse(user);
         } catch (Exception e) {
