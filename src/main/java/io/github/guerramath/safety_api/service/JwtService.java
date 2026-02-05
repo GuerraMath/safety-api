@@ -45,15 +45,21 @@ public class JwtService {
     }
 
     public String generateAccessToken(User user) {
-        return buildToken(new HashMap<>(), user, jwtExpiration);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "access");
+        return buildToken(claims, user, jwtExpiration);
     }
 
     public String generateRefreshToken(User user) {
-        return buildToken(new HashMap<>(), user, refreshExpiration);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        return buildToken(claims, user, refreshExpiration);
     }
 
     public boolean isRefreshToken(String token) {
-        return isTokenValid(token);
+        if (!isTokenValid(token)) return false;
+        String type = extractClaim(token, claims -> claims.get("type", String.class));
+        return "refresh".equals(type);
     }
 
     public String extractUserId(String token) {

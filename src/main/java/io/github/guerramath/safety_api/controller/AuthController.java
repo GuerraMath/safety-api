@@ -5,6 +5,7 @@ import io.github.guerramath.safety_api.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,8 +20,36 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal Object principal) {
+        if (!(principal instanceof String)) {
+            return ResponseEntity.status(401).build();
+        }
+        String userIdStr = (String) principal;
+        try {
+            return ResponseEntity.ok(authService.getCurrentUser(Long.parseLong(userIdStr)));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(401).build();
+        }
+    }
+
     @PostMapping("/google")
     public ResponseEntity<AuthResponse> googleSignIn(@Valid @RequestBody GoogleSignInRequest request) {
         return ResponseEntity.ok(authService.googleSignIn(request));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.ok().build();
     }
 }

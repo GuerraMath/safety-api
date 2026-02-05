@@ -37,24 +37,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = extractJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && jwtService.isTokenValid(jwt)) {
-                String userId = jwtService.extractUserId(jwt);
+                String userIdStr = jwtService.extractUserId(jwt);
+                
+                if (StringUtils.hasText(userIdStr)) {
+                    try {
+                        Long userId = Long.parseLong(userIdStr);
+                        User user = userRepository.findById(userId).orElse(null);
 
-                User user = userRepository.findById(Long.parseLong(userId)).orElse(null);
+                        if (user != null) {
+                            UsernamePasswordAuthenticationToken authentication =
+                                    new UsernamePasswordAuthenticationToken(
+                                            String.valueOf(user.getId()),
+                                            null,
+                                            null);
+                            authentication.setDetails(
+                                    new WebAuthenticationDetailsSource().buildDetails(request));
 
-                if (user != null) {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    user,
-                                    null,
-                                    null);
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        }
+                    } catch (NumberFormatException e) {
+                        // ID malformado no token
+                    }
                 }
             }
         } catch (Exception e) {
-            logger.debug("Falha ao processar JWT token: " + e.getMessage());
+            // Qualquer erro na autenticação não deve derrubar a requisição
         }
 
         filterChain.doFilter(request, response);
